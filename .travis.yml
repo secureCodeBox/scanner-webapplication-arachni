@@ -1,0 +1,16 @@
+language: ruby
+rvm:
+  - 2.5
+jobs:
+  include:
+    - stage: test
+      script: rake test
+    - stage: build docker image
+      if: branch IN (master, develop) AND type != pull_request
+      services:
+      - docker
+      script:
+      - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+      - docker build -t securecodebox/arachni:oss --build-arg=COMMIT_ID=$TRAVIS_COMMIT --build-arg=BRANCH=$TRAVIS_BRANCH --build-arg=REPOSITORY_URL="https://github.com/secureCodeBox/scanner-webapplication-arachni" .
+      - docker images
+      - docker push securecodebox/arachni:oss

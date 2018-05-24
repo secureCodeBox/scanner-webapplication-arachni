@@ -1,26 +1,31 @@
-# secureBoxArachni
-# Based on Sinatra-Ruby
-FROM ruby:2.4.0
+FROM ruby:latest
 MAINTAINER Jasper.Boyn@iteratec.de, Robert.Seedorff@iteratec.de
 
-RUN apt-get update && apt-get install -y --no-install-recommends wget vim ca-certificates
-RUN gem install sinatra rest-client ruby-debug-ide activesupport aws-sdk -N
+WORKDIR /sectools/
 
-#Install pry for debugging
-RUN gem install pry -N
-RUN mkdir /sectools && wget https://github.com/Arachni/arachni/releases/download/v1.5/arachni-1.5-0.5.11-linux-x86_64.tar.gz -P /sectools && tar zxvf /sectools/* -C /sectools && rm /sectools/arachni-1.5-0.5.11-linux-x86_64.tar.gz
+RUN wget https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz -P /sectools && \
+    tar zxvf /sectools/* -C /sectools && \
+    rm /sectools/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
 
-COPY securebox/ /sectools/
+COPY src/ src/
+COPY lib/ lib/
+COPY Gemfile src/
+
+RUN bundle install --gemfile=/sectools/src/Gemfile
+
+RUN addgroup -system arachni_group && \
+    adduser -system arachni_user && \
+    usermod -g arachni_group arachni_user
+# USER arachni_user
 
 EXPOSE 8080
 
-# Uncomment for REST-API usage
-ENTRYPOINT ["bash","./sectools/arachni.sh"]
-#CMD []
+ARG COMMIT_ID=unkown
+ARG REPOSITORY_URL=unkown
+ARG BRANCH=unkown
 
-#ENTRYPOINT ["rdebug-ide", "--host", "0.0.0.0", "--port", "1234", "--dispatcher-port", "26162", "./sectools/arachni-client.rb"]
-# Uncomment for debugging
-#ENTRYPOINT ["ruby", "-d", "./sectools/arachni-client.rb"]
+ENV SCB_COMMIT_ID ${COMMIT_ID}
+ENV SCB_REPOSITORY_URL ${REPOSITORY_URL}
+ENV SCB_BRANCH ${BRANCH}
 
-# Uncomment for bash
-#ENTRYPOINT ["bash"]
+ENTRYPOINT ["bash","/sectools/src/starter.sh"]
