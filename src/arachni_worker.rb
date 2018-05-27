@@ -16,7 +16,7 @@ class ArachniWorker < CamundaWorker
 
     scans = configs.map { |config|
       scan = ArachniScan.new(job_id, config)
-      scan.start_scan
+      scan.work(targets)
       scan
     }
 

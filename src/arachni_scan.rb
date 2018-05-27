@@ -13,17 +13,59 @@ class ArachniScan
     @scanner_url = "http://127.0.0.1:7331"
   end
 
+  def work(target)
+    id = start_scan(target)
+    perform_scan(id)
+    get_scan_report(id)
+    remove_scan(id)
+  end
+
   def start_scan(target)
     payload = {
       "url" => target,
       "checks" => '*'
     }
-    CamundaWorker.http_post(@scanner_url,payload.to_json)
-    $logger.warn "tried to post"
+    $logger "Starting scan" + @scan_id.to_s
+    return CamundaWorker.http_post(@scanner_url,payload.to_json)['id']
   end
 
-  def scan_complete(scan_id)
+  def perorm_scan(scan_instance_id)
+    response = RestClient::Request.execute(
+      method: :get,
+      url: 'http://127.0.0.1:7331/scans/'+ scan_instance_id,
+      timeout: 2
+    )
+    loop do
+      begin
+        $logger.debug('Checking status of scan ' + scan_instance_id)
+      rescue => err
+        $logger.warn err
+      end
+      sleep poll_interval
+      break if !presponse['busy']
+    end
+  end
 
+  def get_scan_report(scan_id)
+    response = RestClient::Request.execute(
+      method: :get,
+      url: 'http://127.0.0.1:7331/scans/'+ scan_instance_id.to_s + 'report.json',
+      timeout: 2
+    )
+    return response
+  end
+
+  def remove_scan(scan_id)
+    begin
+      $logger.debug('Deleting scan ' + scan_instance_id,to_s)
+      RestClient::Request.execute(
+        method: :delete,
+        url: 'http://127.0.0.1:7331/scans/'+ scan_instance_id,
+        timeout: 2
+      )
+    rescue => err
+      $logger.warn err
+    end
   end
 
   def transform_results(raw_results)
