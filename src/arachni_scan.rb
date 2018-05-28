@@ -27,7 +27,18 @@ class ArachniScan
   def start_scan(target)
     payload = {
       "url" => target,
-      "checks" => '*'
+      "scope" => {"dom_depth_limit" => 5},
+      "checks" => '*',
+      "audit" => {
+        "parameter_values" => true,
+        "links" => true,
+        "forms" => true,
+        "cookies" => true,
+        "jsons" => true,
+        "xmls" => true,
+        "ui_forms" => true,
+        "ui_inputs" => true
+      }
     }
     begin
       response = RestClient::Request.execute(
@@ -48,15 +59,15 @@ class ArachniScan
         request = RestClient::Request.execute(
           method: :get,
           url: "#{@scanner_url}/#{scan_instance_id}",
-          timeout: 2
+          timeout: 10
         )
         response = JSON.parse(request)
         $logger.debug "Checking status of scan #{scan_instance_id} : currently busy : #{response['busy']}"
       rescue => err
         $logger.warn err
       end
-      sleep 5
       break if !response['busy']
+      sleep 10
     end
   end
 

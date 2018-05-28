@@ -9,13 +9,13 @@ class ArachniWorker < CamundaWorker
   def work(job_id, targets)
     configs = targets.map {|process_target|
       config = ArachniConfiguration.new
-      config.arachni_target = process_target.dig('location')
+      config.arachni_scanner_target = process_target.dig('location')
       config
     }
 
     scans = configs.map { |config|
       scan = ArachniScan.new(job_id, config)
-      scan.work(config.arachni_target)
+      scan.work(config.arachni_scanner_target)
       scan
     }
 

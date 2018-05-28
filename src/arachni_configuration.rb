@@ -1,5 +1,20 @@
 class ArachniConfiguration
-  attr_accessor :arachni_target
-  attr_accessor :arachni_ports
-  attr_accessor :arachni_parameter
+  attr_accessor :arachni_scanner_target
+  attr_accessor :arachni_dom_depth_limit
+  attr_accessor :arachni_dir_depth_limit
+  attr_accessor :arachni_page_limit
+  attr_accessor :arachni_exclude_patterns
+  attr_accessor :arachni_include_patterns
+  attr_accessor :arachni_scan_methods
+  attr_accessor :arachni_authentication
+  attr_accessor :arachni_cookie_string
+  attr_accessor :arachni_login_url
+  attr_accessor :arachni_login_credentials
+  attr_accessor :arachni_login_check
+  attr_accessor :arachni_login_advanced_script_type
+  attr_accessor :arachni_login_advanced_script
+  attr_accessor :arachni_login_advanced_script_name
+  attr_accessor :arachni_login_advanced_script_args
+  attr_accessor :arachni_login_advanced_check_url
+  attr_accessor :arachni_login_advanced_check_pattern
 end
