@@ -94,25 +94,38 @@ class CamundaWorker
 
   def fetch_and_lock_task
     $logger.debug "fetching task"
-    res = self.http_post("#{@camunda_url}/box/jobs/lock/#{@topic}/#{@worker_id}", "")
-    if res.nil?
+    begin
+      res = self.http_post("#{@camunda_url}/box/jobs/lock/#{@topic}/#{@worker_id}", "")
+      if res.nil?
+        nil
+      else
+        JSON.parse(res)
+      end
+    rescue => e
       nil
-    else
-      JSON.parse(res)
     end
   end
 
   def fail_task(job_id)
-    result = self.http_post("#{@camunda_url}/rest/external-task/#{job_id}/unlock")
-    $logger.debug "unlocked task: " + result.to_s
-    result
+    begin
+      result = self.http_post("#{@camunda_url}/rest/external-task/#{job_id}/unlock")
+      $logger.debug "unlocked task: " + result.to_str
+      result
+    rescue => e
+      $logger.warn "Failed to submit failure for Job #{job_id} to the Engine."
+    end
   end
 
   def complete_task(job_id, payload)
-    $logger.debug "completing task: #{payload}"
+    begin
+      $logger.debug "completing task: #{payload.to_json}"
 
-    result = self.http_post("#{@camunda_url}/box/jobs/#{job_id}/result", payload.to_json)
-    result
+      result = self.http_post("#{@camunda_url}/box/jobs/#{job_id}/result", payload.to_json)
+      $logger.debug "completed task: #{result.to_str}"
+      result
+    rescue => e
+      $logger.warn "Failed to submit scan result for Job #{job_id} to the Engine."
+    end
   end
 
   def http_post(url, payload = "")
@@ -130,35 +143,35 @@ class CamundaWorker
           @last_connect = Time.now
           return nil
         else
-          $logger.debug "Invalid response #{response.to_s} received."
+          $logger.debug "Invalid response #{response.to_str} received."
           @last_connect = "ERROR"
-          fail "Code #{response.code}: Invalid response #{response.to_s} received."
+          fail "Code #{response.code}: Invalid response #{response.to_str} received."
         end
       end
     rescue => e
       $logger.debug "Error while connecting to #{url}"
       $logger.debug e.message
-      return nil
+      throw nil
     end
   end
 
   def create_post_request(url, payload)
     if @protected_engine
       RestClient::Request.new({
-          method: :post,
-          url: url,
-          user: @basic_auth_user,
-          password: @basic_auth_password,
-          payload: payload,
-          headers: {:accept => :'application/json', content_type: :'application/json'}
-      })
+                                  method: :post,
+                                  url: url,
+                                  user: @basic_auth_user,
+                                  password: @basic_auth_password,
+                                  payload: payload,
+                                  headers: {:accept => :'application/json', content_type: :'application/json'}
+                              })
     else
       RestClient::Request.new({
-          method: :post,
-          url: url,
-          payload: payload,
-          headers: {:accept => :'application/json', content_type: :'application/json'}
-      })
+                                  method: :post,
+                                  url: url,
+                                  payload: payload,
+                                  headers: {:accept => :'application/json', content_type: :'application/json'}
+                              })
     end
   end
 end
