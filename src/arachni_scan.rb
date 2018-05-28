@@ -15,12 +15,12 @@ class ArachniScan
   end
 
   def work(target)
-    $logger.info "starting scan for #{target}"
     scan_id = start_scan(target)
     $logger.info "running scan for #{target}"
     perform_scan(scan_id)
     $logger.info "retrieving scan results for #{target}"
     get_scan_report(scan_id)
+    $logger.info "cleaning up scan reports"
     remove_scan(scan_id)
   end
 
@@ -61,18 +61,22 @@ class ArachniScan
   end
 
   def get_scan_report(scan_instance_id)
-    response = RestClient::Request.execute(
-      method: :get,
-      url: "#{@scanner_url}/#{scan_instance_id}/report.json",
-      timeout: 2
-    )
-    $logger.debug "scanner results : #{response}"
-    return response
+    begin
+      report = RestClient::Request.execute(
+        method: :get,
+        url: "#{@scanner_url}/#{scan_instance_id}/report.json",
+        timeout: 2
+      )
+      @raw_results = report
+      # @results = transform_results(@raw_results)
+    rescue => err
+      $logger.warn err
+    end
   end
 
   def remove_scan(scan_instance_id)
     begin
-      $logger.debug "Deleting scan #{scan_instance_id.to_str}"
+      $logger.debug "deleting scan #{scan_instance_id.to_str}"
       RestClient::Request.execute(
         method: :delete,
         url: "#{@scanner_url}/#{scan_instance_id}",
@@ -84,6 +88,8 @@ class ArachniScan
   end
 
   def transform_results(raw_results)
+    # TODO implement transformation
+    # example result : http://www.arachni-scanner.com/reports/report.json
     raw_results.select do |row|
       row.length == 7 && !row[6].empty?
     end.map do |row|
@@ -109,19 +115,4 @@ class ArachniScan
     end
   end
 
-  def import_results
-
-    begin
-      result_text_csv = File.open(@filename, 'r'){ |file| file.read }
-    rescue => e
-      puts "Could not read result file"
-      puts e.message
-    end
-
-    # Replacing " with "" to ensure that they will always be in pairs
-    # A unterminated string will cause the csv parser to fail.
-    result_text_csv = result_text_csv.gsub(/\\"/, '""')
-
-    CSV.parse(result_text_csv)
-  end
 end

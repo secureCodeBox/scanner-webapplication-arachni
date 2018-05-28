@@ -21,7 +21,7 @@ class ArachniWorker < CamundaWorker
 
     {
         findings: scans.flat_map{|scan| scan.results},
-        raw_findings: scans.map{|scan| scan.raw_results},
+        raw_findings: scans.map{|scan| scan.raw_results.to_s},
         scannerId: @worker_id.to_s,
         scannerType: 'arachni'
     }

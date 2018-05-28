@@ -104,15 +104,14 @@ class CamundaWorker
 
   def fail_task(job_id)
     result = self.http_post("#{@camunda_url}/rest/external-task/#{job_id}/unlock")
-    $logger.debug "unlocked task: " + result.to_str
+    $logger.debug "unlocked task: " + result.to_s
     result
   end
 
   def complete_task(job_id, payload)
-    $logger.debug "completing task: #{payload.to_json}"
+    $logger.debug "completing task: #{payload}"
 
     result = self.http_post("#{@camunda_url}/box/jobs/#{job_id}/result", payload.to_json)
-    $logger.debug "completed task: #{result.to_str}"
     result
   end
 
@@ -131,9 +130,9 @@ class CamundaWorker
           @last_connect = Time.now
           return nil
         else
-          $logger.debug "Invalid response #{response.to_str} received."
+          $logger.debug "Invalid response #{response.to_s} received."
           @last_connect = "ERROR"
-          fail "Code #{response.code}: Invalid response #{response.to_str} received."
+          fail "Code #{response.code}: Invalid response #{response.to_s} received."
         end
       end
     rescue => e
