@@ -1,7 +1,8 @@
 require 'securerandom'
 require 'json'
-require_relative "../lib/camunda_worker"
+require 'logger'
 
+$logger = Logger.new(STDOUT)
 
 class ArachniScan
   attr_reader :raw_results
@@ -10,14 +11,17 @@ class ArachniScan
     @scan_id = scan_id
     @config = config
     @uuid_provider = uuid_provider
-    @scanner_url = "http://127.0.0.1:7331"
+    @scanner_url = 'http://127.0.0.1:7331/scans'
   end
 
   def work(target)
-    id = start_scan(target)
-    perform_scan(id)
-    get_scan_report(id)
-    remove_scan(id)
+    $logger.info "starting scan for #{target}"
+    scan_id = start_scan(target)
+    $logger.info "running scan for #{target}"
+    perform_scan(scan_id)
+    $logger.info "retrieving scan results for #{target}"
+    get_scan_report(scan_id)
+    remove_scan(scan_id)
   end
 
   def start_scan(target)
@@ -25,42 +29,53 @@ class ArachniScan
       "url" => target,
       "checks" => '*'
     }
-    $logger "Starting scan" + @scan_id.to_s
-    return CamundaWorker.http_post(@scanner_url,payload.to_json)['id']
-  end
-
-  def perorm_scan(scan_instance_id)
-    response = RestClient::Request.execute(
-      method: :get,
-      url: 'http://127.0.0.1:7331/scans/'+ scan_instance_id,
-      timeout: 2
-    )
-    loop do
-      begin
-        $logger.debug('Checking status of scan ' + scan_instance_id)
-      rescue => err
-        $logger.warn err
-      end
-      sleep poll_interval
-      break if !presponse['busy']
+    begin
+      response = RestClient::Request.execute(
+        method: :post,
+        url: @scanner_url,
+        payload: payload.to_json
+      )
+      id = JSON.parse(response)
+      return id["id"]
+    rescue => err
+      $logger.warn err
     end
   end
 
-  def get_scan_report(scan_id)
+  def perform_scan(scan_instance_id)
+    loop do
+      begin
+        request = RestClient::Request.execute(
+          method: :get,
+          url: "#{@scanner_url}/#{scan_instance_id}",
+          timeout: 2
+        )
+        response = JSON.parse(request)
+        $logger.debug "Checking status of scan #{scan_instance_id} : currently busy : #{response['busy']}"
+      rescue => err
+        $logger.warn err
+      end
+      sleep 5
+      break if !response['busy']
+    end
+  end
+
+  def get_scan_report(scan_instance_id)
     response = RestClient::Request.execute(
       method: :get,
-      url: 'http://127.0.0.1:7331/scans/'+ scan_instance_id.to_s + 'report.json',
+      url: "#{@scanner_url}/#{scan_instance_id}/report.json",
       timeout: 2
     )
+    $logger.debug "scanner results : #{response}"
     return response
   end
 
-  def remove_scan(scan_id)
+  def remove_scan(scan_instance_id)
     begin
-      $logger.debug('Deleting scan ' + scan_instance_id,to_s)
+      $logger.debug "Deleting scan #{scan_instance_id.to_str}"
       RestClient::Request.execute(
         method: :delete,
-        url: 'http://127.0.0.1:7331/scans/'+ scan_instance_id,
+        url: "#{@scanner_url}/#{scan_instance_id}",
         timeout: 2
       )
     rescue => err
