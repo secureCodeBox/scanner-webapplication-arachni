@@ -46,10 +46,10 @@ get '/status' do
 end
 
 def healthcheck(connection)
-  if (connection != "ERROR" && scanner_test == "SUCCESSFULL")
-    return "UP"
+  if connection != "ERROR" && scanner_test == "SUCCESSFULL"
+    "UP"
   end
-    return "DOWN"
+    "DOWN"
 end
 
 def scanner_test
@@ -59,8 +59,8 @@ def scanner_test
     timeout: 2
   )
   if response.code == 200
-    return "SUCCESSFULL"
+    "SUCCESSFULL"
   else
-    return "FAILED"
+    "FAILED"
   end
 end
