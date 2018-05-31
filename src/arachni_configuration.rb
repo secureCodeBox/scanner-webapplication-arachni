@@ -17,4 +17,24 @@ class ArachniConfiguration
   attr_accessor :arachni_login_advanced_script_args
   attr_accessor :arachni_login_advanced_check_url
   attr_accessor :arachni_login_advanced_check_pattern
+
+  def generate_payload
+    {
+        :url => self.arachni_scanner_target,
+        :scope => {
+            :dom_depth_limit => 5
+        },
+        :checks => '*',
+        :audit => {
+            :parameter_values => true,
+            :links => true,
+            :forms => true,
+            :cookies => true,
+            :jsons => true,
+            :xmls => true,
+            :ui_forms => true,
+            :ui_inputs => true
+        }
+    }
+  end
 end

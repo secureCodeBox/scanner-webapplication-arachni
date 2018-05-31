@@ -14,8 +14,8 @@ class ArachniScan
     @scanner_url = 'http://127.0.0.1:7331/scans'
   end
 
-  def work(target)
-    scan_id = start_scan(target)
+  def start
+    scan_id = start_scan
     $logger.info "running scan for #{target}"
     perform_scan(scan_id)
     $logger.info "retrieving scan results for #{target}"
@@ -24,27 +24,12 @@ class ArachniScan
     remove_scan(scan_id)
   end
 
-  def start_scan(target)
-    payload = {
-      "url" => target,
-      "scope" => {"dom_depth_limit" => 5},
-      "checks" => '*',
-      "audit" => {
-        "parameter_values" => true,
-        "links" => true,
-        "forms" => true,
-        "cookies" => true,
-        "jsons" => true,
-        "xmls" => true,
-        "ui_forms" => true,
-        "ui_inputs" => true
-      }
-    }
+  def start_scan
     begin
       response = RestClient::Request.execute(
         method: :post,
         url: @scanner_url,
-        payload: payload.to_json
+        payload: @config.generate_payload.to_json
       )
       id = JSON.parse(response)
       return id["id"]
