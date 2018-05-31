@@ -14,9 +14,8 @@ client = ArachniWorker.new(
 )
 
 get '/status' do
-
   status 500
-  if (healthcheck(client.last_connect) == "UP")
+  if healthcheck(client.last_connect) == "UP"
     status 200
   end
 
@@ -35,7 +34,7 @@ get '/status' do
       last_successful_connection: client.last_connect
     },
     scanner: {
-      version: '1.5.1-0.5.12',
+      version: ENV.fetch('ARACHNI_LONG_VERSION', 'unbkown'),
       test_run: scanner_test
     },
     build: {
