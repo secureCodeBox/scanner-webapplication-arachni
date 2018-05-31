@@ -2,26 +2,28 @@ require 'securerandom'
 require 'json'
 require 'logger'
 
+require_relative './arachni_result_transformer'
+
 $logger = Logger.new(STDOUT)
 
 class ArachniScan
   attr_reader :raw_results
   attr_reader :results
 
-  def initialize(scan_id, config, uuid_provider = SecureRandom)
+  def initialize(scan_id, config)
     @scan_id = scan_id
     @config = config
-    @uuid_provider = uuid_provider
     @scanner_url = 'http://127.0.0.1:7331/scans'
+    @transformer = ArachniResultTransformer.new
   end
 
   def start
     scan_id = start_scan
-    $logger.info "running scan for #{@config.arachni_scanner_target}"
+    $logger.info "Running scan for #{@config.arachni_scanner_target}"
     perform_scan(scan_id)
-    $logger.info "retrieving scan results for #{@config.arachni_scanner_target}"
+    $logger.info "Retrieving scan results for #{@config.arachni_scanner_target}"
     get_scan_report(scan_id)
-    $logger.info "cleaning up scan reports"
+    $logger.info "Cleaning up scan reports"
     remove_scan(scan_id)
   end
 
@@ -33,8 +35,9 @@ class ArachniScan
           payload: @config.generate_payload.to_json
       )
       id = JSON.parse(response)
+      $logger.info "Job ID #{id}"
       return id["id"]
-    rescue => eraar
+    rescue => err
       $logger.warn err
     end
   end
@@ -64,8 +67,8 @@ class ArachniScan
           url: "#{@scanner_url}/#{scan_instance_id}/report.json",
           timeout: 2
       )
-      @raw_results = report
-        # @results = transform_results(@raw_results)
+      @raw_results = JSON.parse(report)
+      @results = @transformer.transform(@raw_results)
     rescue => err
       $logger.warn err
     end
@@ -81,34 +84,6 @@ class ArachniScan
       )
     rescue => err
       $logger.warn err
-    end
-  end
-
-  def transform_results(raw_results)
-    # TODO implement transformation
-    # example result : http://www.arachni-scanner.com/reports/report.json
-    raw_results.select do |row|
-      row.length == 7 && !row[6].empty?
-    end.map do |row|
-      {
-          id: @uuid_provider.uuid,
-          name: row[6],
-          description: '',
-          osi_layer: 'APPLICATION',
-          reference: {
-              id: row[3],
-              source: row[3]
-          },
-          severity: 'INFORMATIONAL',
-          location: "#{row[0]}:#{row[2]}#{row[5]}",
-          attributes: {
-              http_method: row[4],
-              hostname: row[0],
-              path: row[5],
-              ip_address: row[1],
-              port: row[2].to_i
-          }
-      }
     end
   end
 end
