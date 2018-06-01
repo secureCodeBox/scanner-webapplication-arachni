@@ -10,8 +10,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     config.arachni_dom_depth_limit = 10
     config.arachni_page_limit = 22
     config.arachni_dir_depth_limit = 62
-    config.arachni_exclude_patterns = [ 'foo', 'bar' ]
-    config.arachni_include_patterns = [ 'baz', 'bang', 'boom' ]
+    config.arachni_exclude_patterns = ['foo', 'bar']
+    config.arachni_include_patterns = ['baz', 'bang', 'boom']
+    config.arachni_cookie_string = 'foo=bar; bar=foo'
 
     assert_equal(
         config.generate_payload,
@@ -22,6 +23,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :directory_depth_limit => 62,
                 :page_limit => 22
 
+            },
+            :http => {
+                :cookie_string => 'foo=bar; bar=foo'
             },
             :checks => '*',
             :audit => {
