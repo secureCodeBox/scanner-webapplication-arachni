@@ -3,30 +3,30 @@ require_relative '../src/arachni_configuration'
 
 class ArachniConfigurationTest < Test::Unit::TestCase
 
-  # Called before every test method runs. Can be used
-  # to set up fixture information.
-  def setup
-    @config = ArachniConfiguration.new
-    @config.arachni_scanner_target = 'localhost.com'
-  end
-
-  # Called after every test method runs. Can be used to tear
-  # down fixture information.
-
-  def teardown
-    # Do nothing
-  end
-
   def test_should_build_a_correct_payload_with_minimal_input
+
+    config = ArachniConfiguration.new
+    config.arachni_scanner_target = 'localhost.com'
+    config.arachni_dom_depth_limit = 10
+    config.arachni_page_limit = 22
+    config.arachni_dir_depth_limit = 62
+    config.arachni_exclude_patterns = [ 'foo', 'bar' ]
+    config.arachni_include_patterns = [ 'baz', 'bang', 'boom' ]
+
     assert_equal(
-        @config.generate_payload,
+        config.generate_payload,
         {
             :url => 'localhost.com',
             :scope => {
-                :dom_depth_limit => 5
+                :dom_depth_limit => 10,
+                :directory_depth_limit => 62,
+                :page_limit => 22
+
             },
             :checks => '*',
             :audit => {
+                :exclude_vector_patterns => ['foo', 'bar'],
+                :include_vector_patterns => ['baz', 'bang', 'boom'],
                 :parameter_values => true,
                 :links => true,
                 :forms => true,

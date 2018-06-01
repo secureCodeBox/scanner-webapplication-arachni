@@ -22,10 +22,17 @@ class ArachniConfiguration
     {
         :url => self.arachni_scanner_target,
         :scope => {
-            :dom_depth_limit => 5
+            :dom_depth_limit => self.arachni_dom_depth_limit,
+            :directory_depth_limit => self.arachni_dir_depth_limit,
+            :page_limit => self.arachni_page_limit
+        },
+        :http => {
+          :cookie_string => self.arachni_cookie_string
         },
         :checks => '*',
         :audit => {
+            :include_vector_patterns => self.arachni_include_patterns,
+            :exclude_vector_patterns => self.arachni_exclude_patterns,
             :parameter_values => true,
             :links => true,
             :forms => true,
