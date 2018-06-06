@@ -1,5 +1,4 @@
 FROM ruby:latest
-MAINTAINER Jasper.Boyn@iteratec.de, Robert.Seedorff@iteratec.de
 
 WORKDIR /sectools/
 
