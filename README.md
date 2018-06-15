@@ -1,6 +1,11 @@
 ![Build Status](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni.svg?token=2Rsf2E9Bq3FduSxRf6tz&branch=develop)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+# Important License information
+The code in this repository is licensed under Apache 2.0.
+
+Arachni is licensed under the [Arachni Public Source License](ARACHNI_LICENSE.md) with using this scanner you have to agree to the license!
+
 # About
 This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application.
 
