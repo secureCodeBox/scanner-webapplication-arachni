@@ -34,7 +34,7 @@ get '/status' do
       last_successful_connection: client.last_connect
     },
     scanner: {
-      version: ENV.fetch('ARACHNI_LONG_VERSION', 'unbkown'),
+      version: ENV.fetch('ARACHNI_LONG_VERSION', 'unnkown'),
       test_run: scanner_test
     },
     build: {
@@ -46,7 +46,7 @@ get '/status' do
 end
 
 def healthcheck(connection)
-  if connection != "ERROR" && scanner_test == "SUCCESSFULL"
+  if connection != "ERROR" && scanner_test == "SUCCESSFUL"
     "UP"
   end
     "DOWN"
@@ -59,7 +59,7 @@ def scanner_test
     timeout: 2
   )
   if response.code == 200
-    "SUCCESSFULL"
+    "SUCCESSFUL"
   else
     "FAILED"
   end
