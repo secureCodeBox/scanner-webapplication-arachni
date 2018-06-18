@@ -1,25 +1,29 @@
 require 'test/unit'
 require_relative '../src/arachni_configuration'
 
+
 class ArachniConfigurationTest < Test::Unit::TestCase
 
   def test_should_build_a_correct_payload_with_minimal_input
-
-    config = ArachniConfiguration.new
-    config.arachni_scanner_target = 'localhost.com'
-    config.arachni_dom_depth_limit = 10
-    config.arachni_page_limit = 22
-    config.arachni_dir_depth_limit = 62
-    config.arachni_include_patterns = ['baz', 'bang', 'boom']
-    config.arachni_exclude_patterns = ['foo', 'bar']
-    config.arachni_cookie_string = 'foo=bar; bar=foo'
-    config.arachni_extend_paths = ['http://foobar.com', 'http://foobar.com/foo/bar']
-
-    config.arachni_login_url = ''
-    config.arachni_login_credentials = ''
-    config.arachni_login_check = ''
-
-    config.arachni_login_script_filename = ''
+    target = {
+        "location" => 'localhost.com',
+        "name" => 'unused',
+        "attributes" => {
+            "ARACHNI_DOM_DEPTH_LIMIT" => 10,
+            "ARACHNI_DIR_DEPTH_LIMIT" => 62,
+            "ARACHNI_PAGE_LIMIT" => 22,
+            "ARACHNI_INCLUDE_PATTERNS" => ['baz', 'bang', 'boom'],
+            "ARACHNI_EXCLUDE_PATTERNS" => ['foo', 'bar'],
+            "ARACHNI_SCAN_METHODS" => '', # Unused atm
+            "ARACHNI_COOKIE_STRING" => 'foo=bar; bar=foo',
+            "ARACHNI_EXTEND_PATH" => ['http://foobar.com', 'http://foobar.com/foo/bar'],
+            "ARACHNI_LOGIN_URL" => '',
+            "ARACHNI_LOGIN_CREDENTIALS" => '',
+            "ARACHNI_LOGIN_CHECK" => '',
+            "ARACHNI_LOGIN_SCRIPT_FILENAME" => ''
+        }
+    }
+    config = ArachniConfiguration.from_target target
 
     assert_equal(
         config.generate_payload,
@@ -53,22 +57,25 @@ class ArachniConfigurationTest < Test::Unit::TestCase
   end
 
   def test_should_build_a_correct_payload_with_autologin_plugin
-
-    config = ArachniConfiguration.new
-    config.arachni_scanner_target = 'localhost.com'
-    config.arachni_dom_depth_limit = 10
-    config.arachni_page_limit = 22
-    config.arachni_dir_depth_limit = 62
-    config.arachni_include_patterns = []
-    config.arachni_exclude_patterns = []
-    config.arachni_cookie_string = ''
-    config.arachni_extend_paths = []
-
-    config.arachni_login_url = 'http://foobar.com/login'
-    config.arachni_login_credentials = 'username=simon&password=123456'
-    config.arachni_login_check = 'Login Successful!'
-
-    config.arachni_login_script_filename = ''
+    target = {
+        "location" => 'localhost.com',
+        "name" => 'unused',
+        "attributes" => {
+            "ARACHNI_DOM_DEPTH_LIMIT" => 10,
+            "ARACHNI_DIR_DEPTH_LIMIT" => 62,
+            "ARACHNI_PAGE_LIMIT" => 22,
+            "ARACHNI_INCLUDE_PATTERNS" => [],
+            "ARACHNI_EXCLUDE_PATTERNS" => [],
+            "ARACHNI_SCAN_METHODS" => '', # Unused atm
+            "ARACHNI_COOKIE_STRING" => '',
+            "ARACHNI_EXTEND_PATH" => [],
+            "ARACHNI_LOGIN_URL" => 'http://foobar.com/login',
+            "ARACHNI_LOGIN_CREDENTIALS" => 'username=simon&password=123456',
+            "ARACHNI_LOGIN_CHECK" => 'Login Successful!',
+            "ARACHNI_LOGIN_SCRIPT_FILENAME" => ''
+        }
+    }
+    config = ArachniConfiguration.from_target target
 
     assert_equal(
         config.generate_payload,
@@ -108,22 +115,25 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     end
 
   def test_should_build_a_correct_payload_with_login_script_plugin
-
-    config = ArachniConfiguration.new
-    config.arachni_scanner_target = 'localhost.com'
-    config.arachni_dom_depth_limit = 10
-    config.arachni_page_limit = 22
-    config.arachni_dir_depth_limit = 62
-    config.arachni_include_patterns = []
-    config.arachni_exclude_patterns = []
-    config.arachni_cookie_string = ''
-    config.arachni_extend_paths = []
-
-    config.arachni_login_url = ''
-    config.arachni_login_credentials = ''
-    config.arachni_login_check = ''
-
-    config.arachni_login_script_filename = 'login.rb'
+    target = {
+        "location" => 'localhost.com',
+        "name" => 'unused',
+        "attributes" => {
+            "ARACHNI_DOM_DEPTH_LIMIT" => 10,
+            "ARACHNI_DIR_DEPTH_LIMIT" => 62,
+            "ARACHNI_PAGE_LIMIT" => 22,
+            "ARACHNI_INCLUDE_PATTERNS" => [],
+            "ARACHNI_EXCLUDE_PATTERNS" => [],
+            "ARACHNI_SCAN_METHODS" => '', # Unused atm
+            "ARACHNI_COOKIE_STRING" => '',
+            "ARACHNI_EXTEND_PATH" => [],
+            "ARACHNI_LOGIN_URL" => '',
+            "ARACHNI_LOGIN_CREDENTIALS" => '',
+            "ARACHNI_LOGIN_CHECK" => '',
+            "ARACHNI_LOGIN_SCRIPT_FILENAME" => 'login.rb'
+        }
+    }
+    config = ArachniConfiguration.from_target target
 
     assert_equal(
         config.generate_payload,
