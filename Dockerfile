@@ -16,11 +16,15 @@ RUN bundle install --gemfile=/sectools/src/Gemfile
 COPY src/ src/
 COPY lib/ lib/
 
-RUN addgroup -system arachni_group && \
-    adduser -system arachni_user && \
-    usermod -g arachni_group arachni_user
+RUN addgroup -system arachni && \
+    adduser -system arachni && \
+    usermod -g arachni arachni
 
-# USER arachni_user
+RUN chown -R arachni /sectools/
+
+USER arachni
+
+VOLUME /securecodebox/scripts/
 
 EXPOSE 8080
 
