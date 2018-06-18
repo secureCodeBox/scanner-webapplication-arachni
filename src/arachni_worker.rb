@@ -20,15 +20,11 @@ class ArachniWorker < CamundaWorker
       config.arachni_scan_methods = target.dig('attributes', 'ARACHNI_SCAN_METHODS')
       config.arachni_authentication = target.dig('attributes', 'ARACHNI_AUTHENTICATION')
       config.arachni_cookie_string = target.dig('attributes', 'ARACHNI_COOKIE_STRING')
+      config.arachni_extend_paths = target.dig('attributes', 'ARACHNI_EXTEND_PATH')
       config.arachni_login_url = target.dig('attributes', 'ARACHNI_LOGIN_URL')
       config.arachni_login_credentials = target.dig('attributes', 'ARACHNI_LOGIN_CREDENTIALS')
       config.arachni_login_check = target.dig('attributes', 'ARACHNI_LOGIN_CHECK')
-      config.arachni_login_advanced_script_type = target.dig('attributes', 'ARACHNI_LOGIN_ADVANCED_SCRIPT_TYPE')
-      config.arachni_login_advanced_script = target.dig('attributes', 'ARACHNI_LOGIN_ADVANCED_SCRIPT')
-      config.arachni_login_advanced_script_name = target.dig('attributes', 'ARACHNI_LOGIN_ADVANCED_SCRIPT_NAME')
-      config.arachni_login_advanced_script_args = target.dig('attributes', 'ARACHNI_LOGIN_ADVANCED_SCRIPT_ARGS')
-      config.arachni_login_advanced_check_url = target.dig('attributes', 'ARACHNI_LOGIN_ADVANCED_CHECK_URL')
-      config.arachni_login_advanced_check_pattern = target.dig('attributes', 'ARACHNI_LOGIN_ADVANCED_CHECK_PATTERN')
+      config.arachni_login_script_filename = target.dig('attributes', 'ARACHNI_LOGIN_SCRIPT_FILENAME')
 
       config
     }
