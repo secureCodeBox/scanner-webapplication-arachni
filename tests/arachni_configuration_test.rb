@@ -19,6 +19,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     config.arachni_login_credentials = ''
     config.arachni_login_check = ''
 
+    config.arachni_login_script_filename = ''
+
     assert_equal(
         config.generate_payload,
         {
@@ -66,6 +68,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     config.arachni_login_credentials = 'username=simon&password=123456'
     config.arachni_login_check = 'Login Successful!'
 
+    config.arachni_login_script_filename = ''
+
     assert_equal(
         config.generate_payload,
         {
@@ -97,6 +101,59 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                     :url => 'http://foobar.com/login',
                     :parameters => 'username=simon&password=123456',
                     :check => 'Login Successful!'
+                }
+            }
+        }
+    )
+    end
+
+  def test_should_build_a_correct_payload_with_login_script_plugin
+
+    config = ArachniConfiguration.new
+    config.arachni_scanner_target = 'localhost.com'
+    config.arachni_dom_depth_limit = 10
+    config.arachni_page_limit = 22
+    config.arachni_dir_depth_limit = 62
+    config.arachni_include_patterns = []
+    config.arachni_exclude_patterns = []
+    config.arachni_cookie_string = ''
+    config.arachni_extend_paths = []
+
+    config.arachni_login_url = ''
+    config.arachni_login_credentials = ''
+    config.arachni_login_check = ''
+
+    config.arachni_login_script_filename = 'login.rb'
+
+    assert_equal(
+        config.generate_payload,
+        {
+            :url => 'localhost.com',
+            :scope => {
+                :dom_depth_limit => 10,
+                :directory_depth_limit => 62,
+                :page_limit => 22,
+                :extend_paths => [],
+                :include_path_patterns => [],
+                :exclude_path_patterns => []
+            },
+            :http => {
+                :cookie_string => ''
+            },
+            :checks => '*',
+            :audit => {
+                :parameter_values => true,
+                :links => true,
+                :forms => true,
+                :cookies => true,
+                :jsons => true,
+                :xmls => true,
+                :ui_forms => true,
+                :ui_inputs => true
+            },
+            :plugins => {
+                :login_script => {
+                    :script => '/securecodebox/scripts/login.rb'
                 }
             }
         }

@@ -1,3 +1,5 @@
+require('pathname')
+
 class ArachniConfiguration
   attr_accessor :arachni_scanner_target
   attr_accessor :arachni_dom_depth_limit
@@ -12,12 +14,7 @@ class ArachniConfiguration
   attr_accessor :arachni_login_url
   attr_accessor :arachni_login_credentials
   attr_accessor :arachni_login_check
-  attr_accessor :arachni_login_advanced_script_type
-  attr_accessor :arachni_login_advanced_script
-  attr_accessor :arachni_login_advanced_script_name
-  attr_accessor :arachni_login_advanced_script_args
-  attr_accessor :arachni_login_advanced_check_url
-  attr_accessor :arachni_login_advanced_check_pattern
+  attr_accessor :arachni_login_script_filename
 
   def generate_payload
     plugins = {}
@@ -27,6 +24,12 @@ class ArachniConfiguration
           :url => self.arachni_login_url,
           :parameters => self.arachni_login_credentials,
           :check => self.arachni_login_check
+      }
+    elsif self.arachni_login_script_filename != ''
+      script_file = Pathname.new(self.arachni_login_script_filename)
+
+      plugins[:login_script] = {
+          :script => "/securecodebox/scripts/#{script_file.basename}"
       }
     end
 
