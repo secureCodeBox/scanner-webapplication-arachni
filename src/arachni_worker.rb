@@ -12,7 +12,7 @@ class ArachniWorker < CamundaWorker
     }
 
     scans = configs.map { |config|
-      scan = ArachniScan.new(job_id, config)
+      scan = ArachniScan.new(config)
       scan.start
       scan
     }
