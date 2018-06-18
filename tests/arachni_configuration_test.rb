@@ -13,6 +13,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     config.arachni_exclude_patterns = ['foo', 'bar']
     config.arachni_include_patterns = ['baz', 'bang', 'boom']
     config.arachni_cookie_string = 'foo=bar; bar=foo'
+    config.arachni_extend_paths = ['http://foobar.com', 'http://foobar.com/foo/bar']
 
     assert_equal(
         config.generate_payload,
@@ -21,8 +22,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             :scope => {
                 :dom_depth_limit => 10,
                 :directory_depth_limit => 62,
-                :page_limit => 22
-
+                :page_limit => 22,
+                :extend_paths => ['http://foobar.com', 'http://foobar.com/foo/bar']
             },
             :http => {
                 :cookie_string => 'foo=bar; bar=foo'

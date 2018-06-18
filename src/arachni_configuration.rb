@@ -8,6 +8,7 @@ class ArachniConfiguration
   attr_accessor :arachni_scan_methods
   attr_accessor :arachni_authentication
   attr_accessor :arachni_cookie_string
+  attr_accessor :arachni_extend_paths
   attr_accessor :arachni_login_url
   attr_accessor :arachni_login_credentials
   attr_accessor :arachni_login_check
@@ -24,7 +25,8 @@ class ArachniConfiguration
         :scope => {
             :dom_depth_limit => self.arachni_dom_depth_limit,
             :directory_depth_limit => self.arachni_dir_depth_limit,
-            :page_limit => self.arachni_page_limit
+            :page_limit => self.arachni_page_limit,
+            :extend_paths => self.arachni_extend_paths
         },
         :http => {
           :cookie_string => self.arachni_cookie_string
