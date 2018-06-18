@@ -20,6 +20,16 @@ class ArachniConfiguration
   attr_accessor :arachni_login_advanced_check_pattern
 
   def generate_payload
+    plugins = {}
+
+    if self.arachni_login_url != '' or self.arachni_login_credentials != '' or self.arachni_login_check != ''
+      plugins[:autologin] = {
+          :url => self.arachni_login_url,
+          :parameters => self.arachni_login_credentials,
+          :check => self.arachni_login_check
+      }
+    end
+
     {
         :url => self.arachni_scanner_target,
         :scope => {
@@ -43,7 +53,8 @@ class ArachniConfiguration
             :xmls => true,
             :ui_forms => true,
             :ui_inputs => true
-        }
+        },
+        :plugins => plugins
     }
   end
 end
