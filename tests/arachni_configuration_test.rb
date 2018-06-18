@@ -10,8 +10,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     config.arachni_dom_depth_limit = 10
     config.arachni_page_limit = 22
     config.arachni_dir_depth_limit = 62
-    config.arachni_exclude_patterns = ['foo', 'bar']
     config.arachni_include_patterns = ['baz', 'bang', 'boom']
+    config.arachni_exclude_patterns = ['foo', 'bar']
     config.arachni_cookie_string = 'foo=bar; bar=foo'
     config.arachni_extend_paths = ['http://foobar.com', 'http://foobar.com/foo/bar']
 
@@ -27,15 +27,15 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :dom_depth_limit => 10,
                 :directory_depth_limit => 62,
                 :page_limit => 22,
-                :extend_paths => ['http://foobar.com', 'http://foobar.com/foo/bar']
+                :extend_paths => ['http://foobar.com', 'http://foobar.com/foo/bar'],
+                :include_path_patterns => ['baz', 'bang', 'boom'],
+                :exclude_path_patterns =>  ['foo', 'bar']
             },
             :http => {
                 :cookie_string => 'foo=bar; bar=foo'
             },
             :checks => '*',
             :audit => {
-                :exclude_vector_patterns => ['foo', 'bar'],
-                :include_vector_patterns => ['baz', 'bang', 'boom'],
                 :parameter_values => true,
                 :links => true,
                 :forms => true,
@@ -57,8 +57,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     config.arachni_dom_depth_limit = 10
     config.arachni_page_limit = 22
     config.arachni_dir_depth_limit = 62
-    config.arachni_exclude_patterns = []
     config.arachni_include_patterns = []
+    config.arachni_exclude_patterns = []
     config.arachni_cookie_string = ''
     config.arachni_extend_paths = []
 
@@ -74,15 +74,15 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :dom_depth_limit => 10,
                 :directory_depth_limit => 62,
                 :page_limit => 22,
-                :extend_paths => []
+                :extend_paths => [],
+                :include_path_patterns => [],
+                :exclude_path_patterns => []
             },
             :http => {
                 :cookie_string => ''
             },
             :checks => '*',
             :audit => {
-                :exclude_vector_patterns => [],
-                :include_vector_patterns => [],
                 :parameter_values => true,
                 :links => true,
                 :forms => true,
@@ -93,11 +93,11 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :ui_inputs => true
             },
             :plugins => {
-              :autologin => {
-                  :url => 'http://foobar.com/login',
-                  :parameters => 'username=simon&password=123456',
-                  :check => 'Login Successful!'
-              }
+                :autologin => {
+                    :url => 'http://foobar.com/login',
+                    :parameters => 'username=simon&password=123456',
+                    :check => 'Login Successful!'
+                }
             }
         }
     )

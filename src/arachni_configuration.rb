@@ -36,15 +36,15 @@ class ArachniConfiguration
             :dom_depth_limit => self.arachni_dom_depth_limit,
             :directory_depth_limit => self.arachni_dir_depth_limit,
             :page_limit => self.arachni_page_limit,
-            :extend_paths => self.arachni_extend_paths
+            :extend_paths => self.arachni_extend_paths,
+            :include_path_patterns => self.arachni_include_patterns,
+            :exclude_path_patterns => self.arachni_exclude_patterns,
         },
         :http => {
           :cookie_string => self.arachni_cookie_string
         },
         :checks => '*',
         :audit => {
-            :include_vector_patterns => self.arachni_include_patterns,
-            :exclude_vector_patterns => self.arachni_exclude_patterns,
             :parameter_values => true,
             :links => true,
             :forms => true,
