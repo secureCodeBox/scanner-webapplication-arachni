@@ -108,11 +108,16 @@ class CamundaWorker
 
   def fail_task(job_id)
     begin
-      result = self.http_post("#{@camunda_url}/rest/external-task/#{job_id}/unlock")
+      result = self.http_post("#{@camunda_url}/box/jobs/#{job_id}/failure", {
+        errorDetails: "Failed to perform nikto scan",
+        errorMessage: "",
+        scannerId: @worker_id
+      }.to_json)
       $logger.debug "unlocked task: " + result.to_str
       result
     rescue => e
       $logger.warn "Failed to submit failure for Job #{job_id} to the Engine."
+      $logger.warn e
     end
   end
 
@@ -158,20 +163,20 @@ class CamundaWorker
   def create_post_request(url, payload)
     if @protected_engine
       RestClient::Request.new({
-                                  method: :post,
-                                  url: url,
-                                  user: @basic_auth_user,
-                                  password: @basic_auth_password,
-                                  payload: payload,
-                                  headers: {:accept => :'application/json', content_type: :'application/json'}
-                              })
+                    method: :post,
+                    url: url,
+                    user: @basic_auth_user,
+                    password: @basic_auth_password,
+                    payload: payload,
+                    headers: {:accept => :'application/json', content_type: :'application/json'}
+                  })
     else
       RestClient::Request.new({
-                                  method: :post,
-                                  url: url,
-                                  payload: payload,
-                                  headers: {:accept => :'application/json', content_type: :'application/json'}
-                              })
+                    method: :post,
+                    url: url,
+                    payload: payload,
+                    headers: {:accept => :'application/json', content_type: :'application/json'}
+                  })
     end
   end
 end
