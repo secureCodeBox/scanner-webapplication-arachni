@@ -48,8 +48,9 @@ end
 def healthcheck(connection)
   if connection != "ERROR" && scanner_test == "SUCCESSFUL"
     "UP"
-  end
+  else
     "DOWN"
+  end
 end
 
 def scanner_test
