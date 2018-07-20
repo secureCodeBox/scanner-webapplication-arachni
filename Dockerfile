@@ -20,7 +20,9 @@ RUN addgroup -system arachni && \
     adduser -system arachni && \
     usermod -g arachni arachni
 
-RUN chown -R arachni /sectools/
+RUN chgrp -R 0 /sectools/ && \
+    chmod -R g=u /sectools/ && \
+    chown -R arachni /sectools/
 
 USER arachni
 
