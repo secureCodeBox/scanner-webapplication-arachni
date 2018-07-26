@@ -4,10 +4,9 @@ require 'securerandom'
 require 'logger'
 
 $logger = Logger.new(STDOUT)
-
+STDOUT.sync = true
 if ENV.key? 'DEBUG'
   $logger.level = Logger::DEBUG
-  STDOUT.sync = ENV['DEBUG']
 else
   $logger.level = Logger::INFO
 end
