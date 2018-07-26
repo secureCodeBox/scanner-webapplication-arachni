@@ -14,9 +14,9 @@ client = ArachniWorker.new(
 )
 
 get '/status' do
-  testrun = scanner_test
+  test_run = scanner_test
   status 500
-  if healthcheck(client.last_connect) == "UP" and testrun == "SUCCESSFUL" and !client.errored
+  if healthy?(client, test_run) == "UP"
     status 200
   end
 
@@ -24,7 +24,7 @@ get '/status' do
   {
     started_at: client.start_time,
     worker_id: client.worker_id,
-    healthcheck: healthcheck(client.last_connect),
+    healthcheck: healthy?(client, test_run) ? "UP" : "DOWN",
     status: {
       started: client.started_tasks,
       completed: client.completed_tasks,
@@ -36,7 +36,7 @@ get '/status' do
     },
     scanner: {
       version: ENV.fetch('ARACHNI_LONG_VERSION', 'unnkown'),
-      test_run: scanner_test,
+      test_run: test_run,
       has_errored: client.errored
     },
     build: {
@@ -47,12 +47,8 @@ get '/status' do
   }.to_json
 end
 
-def healthcheck(connection)
-  if connection != "ERROR" && scanner_test == "SUCCESSFUL"
-    "UP"
-  else
-    "DOWN"
-  end
+def healthy?(worker, test_run)
+  worker.last_connect != "ERROR" and test_run == "SUCCESSFUL" and !worker.errored
 end
 
 def scanner_test
