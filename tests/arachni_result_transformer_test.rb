@@ -176,5 +176,24 @@ EOM
         @transformer.transform(result),
         []
     )
+    end
+
+  def test_add_a_timed_out_finding_when_optional_parameter_is_passed
+
+    result = JSON.parse(@empty_result)
+
+    assert_equal(
+        @transformer.transform(result, timed_out: true),
+        [{
+             id: "49bf7fd3-8512-4d73-a28f-608e493cd726",
+             name: "Arachni Scan timed out and could no be finished.",
+             description: "Arachni Scan didnt send any new requests for 5 minutes. This probably means that arachni encountered some internal errors it could not handle.",
+             osi_layer: 'NOT_APPLICABLE',
+             severity: "MEDIUM",
+             category: "ScanError",
+             hint: "This could be related to a misconfiguration. But could also be related to internal instabilities of the arachni platform.",
+             attributes: {}
+         }]
+    )
   end
 end
