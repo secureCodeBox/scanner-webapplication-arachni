@@ -14,8 +14,9 @@ client = ArachniWorker.new(
 )
 
 get '/status' do
+  testrun = scanner_test
   status 500
-  if healthcheck(client.last_connect) == "UP"
+  if healthcheck(client.last_connect) == "UP" and testrun == "SUCCESSFUL" and !client.errored
     status 200
   end
 
@@ -35,7 +36,8 @@ get '/status' do
     },
     scanner: {
       version: ENV.fetch('ARACHNI_LONG_VERSION', 'unnkown'),
-      test_run: scanner_test
+      test_run: scanner_test,
+      has_errored: client.errored
     },
     build: {
       repository_url: client.repository_url,

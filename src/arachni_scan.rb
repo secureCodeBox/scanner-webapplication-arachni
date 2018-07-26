@@ -13,11 +13,13 @@ end
 class ArachniScan
   attr_reader :raw_results
   attr_reader :results
+  attr_reader :errored
 
   def initialize(config)
     @config = config
     @scanner_url = 'http://127.0.0.1:7331/scans'
     @transformer = ArachniResultTransformer.new
+    @errored = false
   end
 
   def start
@@ -30,8 +32,7 @@ class ArachniScan
     rescue ScanTimeOutError => err
       $logger.warn "Scan #{@scan_id} timed out! Sending unfinished report to engine."
       get_scan_report(true)
-
-
+      @errored = true
     end
 
     $logger.info "Cleaning up scan report for #{@config.arachni_scanner_target}"
