@@ -6,7 +6,7 @@ class ArachniResultTransformer
     @uuid_provider = uuid_provider;
   end
 
-  def transform(result, timedOut)
+  def transform(result, timed_out: false)
     findings = result["issues"].map do |issue|
       if issue['cwe']
         reference = {
@@ -30,7 +30,7 @@ class ArachniResultTransformer
       }
     end
 
-    if timedOut
+    if timed_out
       findings.push({
        id: @uuid_provider.uuid,
        name: "Arachni Scan timed out and could no be finished.",

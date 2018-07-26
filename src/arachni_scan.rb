@@ -31,7 +31,7 @@ class ArachniScan
       get_scan_report
     rescue ScanTimeOutError => err
       $logger.warn "Scan #{@scan_id} timed out! Sending unfinished report to engine."
-      get_scan_report(true)
+      get_scan_report(timed_out: true)
       @errored = true
     end
 
@@ -89,7 +89,7 @@ class ArachniScan
     end
   end
 
-  def get_scan_report(timedOut = false)
+  def get_scan_report(timed_out: false)
     begin
       report = RestClient::Request.execute(
           method: :get,
@@ -97,7 +97,7 @@ class ArachniScan
           timeout: 2
       )
       @raw_results = JSON.parse(report)
-      @results = @transformer.transform(@raw_results, timedOut)
+      @results = @transformer.transform(@raw_results, timed_out: timed_out)
     rescue => err
       $logger.warn err
     end
