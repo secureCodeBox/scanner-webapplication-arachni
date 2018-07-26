@@ -71,8 +71,9 @@ class ArachniScan
         $logger.warn err
       end
 
+      findingCount = response["issues"].length
       currentRequestCount = response['statistics']['http']['request_count']
-      $logger.debug "Currently at #{currentRequestCount} requests made"
+      $logger.info "Currently at #{findingCount} findings with #{currentRequestCount} requests made"
 
       if currentRequestCount == last_request_count
         if Time.now > last_request_count_change + (5 * 60)
