@@ -1,5 +1,15 @@
 require('pathname')
 
+def is_set(val)
+  if val.nil?
+    false
+  elsif val.is_a?(String)
+    val != ''
+  elsif val.is_a?(Array)
+    val.length != 0
+  end
+end
+
 class ArachniConfiguration
   attr_accessor :arachni_scanner_target
   attr_accessor :arachni_dom_depth_limit
@@ -41,13 +51,13 @@ class ArachniConfiguration
   def generate_payload
     plugins = {}
 
-    if self.arachni_login_url != '' or self.arachni_login_credentials != '' or self.arachni_login_check != ''
+    if is_set(self.arachni_login_url) or is_set(self.arachni_login_credentials) or is_set(self.arachni_login_check)
       plugins[:autologin] = {
           :url => self.arachni_login_url,
           :parameters => self.arachni_login_credentials,
           :check => self.arachni_login_check
       }
-    elsif self.arachni_login_script_filename != ''
+    elsif is_set(self.arachni_login_script_filename)
       script_file = Pathname.new(self.arachni_login_script_filename)
 
       plugins[:login_script] = {
