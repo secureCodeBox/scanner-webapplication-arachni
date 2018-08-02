@@ -8,10 +8,10 @@ class ArachniResultTransformer
 
   def transform(result, timed_out: false)
     findings = result["issues"].map do |issue|
-      if issue['cwe']
+      if issue.dig('cwe')
         reference = {
-            id: "CWE-#{issue['cwe']}",
-            source: issue['cwe_url'] ? issue['cwe_url'] : ''
+            id: "CWE-#{issue.dig('cwe')}",
+            source: issue.dig('cwe_url') ? issue.dig('cwe_url') : ''
         }
       else
         reference = {}
@@ -19,15 +19,30 @@ class ArachniResultTransformer
 
       {
           id: @uuid_provider.uuid,
-          name: issue['name'],
-          description: issue['description'],
-          category: issue['name'],
+          name: issue.dig('name'),
+          description: issue.dig('description'),
+          category: issue.dig('name'),
           osi_layer: 'APPLICATION',
           reference: reference,
-          severity: issue['severity'].upcase,
-          location: issue['request']['url'],
-          hint: issue['remedy_guidance'] ? issue['remedy_guidance'] : '',
-          attributes: {}
+          severity: issue.dig('severity').upcase,
+          location: issue.dig('request', 'url'),
+          hint: issue.dig('remedy_guidance') ? issue.dig('remedy_guidance') : '',
+          attributes: {
+              ARACHNI_REQUEST: {
+                 URL: issue.dig('request', 'url'),
+                 PARAMETER: issue.dig('request', 'parameters'),
+                 HEADERS: issue.dig('request', 'headers'),
+                 BODY: issue.dig('request', 'body'),
+                 METHOD: issue.dig('request', 'method')
+              },
+              ARACHNI_RESPONSE: {
+                 URL: issue.dig('response', 'url'),
+                 PARAMETER: issue.dig('response', 'parameters'),
+                 HEADERS: issue.dig('response', 'headers'),
+                 BODY: issue.dig('response', 'body'),
+                 STATUS: issue.dig('response', 'code')
+              }
+          }
       }
     end
 
