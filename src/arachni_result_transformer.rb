@@ -21,6 +21,7 @@ class ArachniResultTransformer
           id: @uuid_provider.uuid,
           name: issue['name'],
           description: issue['description'],
+          category: issue['name'],
           osi_layer: 'APPLICATION',
           reference: reference,
           severity: issue['severity'].upcase,
