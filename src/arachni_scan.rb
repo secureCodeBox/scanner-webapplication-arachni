@@ -46,11 +46,16 @@ class ArachniScan
           url: @scanner_url,
           payload: @config.generate_payload.to_json
       )
+
+      $logger.debug "Starting scan returned #{response.code} code."
+
       id = JSON.parse(response)["id"]
       $logger.info "Started job with ID '#{id}'"
       id
+
     rescue => err
       $logger.warn err
+      raise CamundaIncident.new("Failed to start arachni scan.", "This is most likely related to a error in the configuration. Check the arachni logs for more details.")
     end
   end
 
@@ -65,6 +70,7 @@ class ArachniScan
             url: "#{@scanner_url}/#{@scan_id}",
             timeout: 2
         )
+        $logger.debug "Status endpoint returned #{request.code}"
         response = JSON.parse(request)
         $logger.debug "Checking status of scan '#{@scan_id}': currently busy: #{response['busy']}"
       rescue => err
