@@ -11,6 +11,16 @@ else
   $logger.level = Logger::INFO
 end
 
+class CamundaIncident < StandardError
+  attr_accessor :message
+  attr_accessor :details
+  def initialize(message, details)
+    super()
+    @message = message
+    @details = details
+  end
+end
+
 class CamundaWorker
   attr_reader :worker_id
   attr_reader :started_tasks
@@ -73,11 +83,12 @@ class CamundaWorker
         self.complete_task job_id, result
 
         $logger.info "Completed scan #{job_id}"
+      rescue CamundaIncident => err
+        self.fail_task(job_id, message: err.message, details: err.details)
       rescue => err
         $logger.warn "Failed to perform scan #{job_id}"
         $logger.warn err
-        $logger.warn err.backtrace
-        $logger.warn "Task will be unlocked for further tries."
+        $logger.debug err.backtrace
         @failed_tasks = @failed_tasks.succ
 
         self.fail_task job_id
@@ -105,14 +116,14 @@ class CamundaWorker
     end
   end
 
-  def fail_task(job_id)
+  def fail_task(job_id, message: "Failed to perform Scan", details: "Scan failed for unknown reasons.")
     begin
       result = self.http_post("#{@camunda_url}/box/jobs/#{job_id}/failure", {
-        errorDetails: "Failed to perform nikto scan",
-        errorMessage: "",
+        errorDetails: details,
+        errorMessage: message,
         scannerId: @worker_id
       }.to_json)
-      $logger.debug "unlocked task: " + result.to_str
+      $logger.info "Submitted failure for job: " + job_id
       result
     rescue => e
       $logger.warn "Failed to submit failure for Job #{job_id} to the Engine."
