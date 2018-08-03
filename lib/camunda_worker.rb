@@ -119,9 +119,9 @@ class CamundaWorker
   def fail_task(job_id, message: "Failed to perform Scan", details: "Scan failed for unknown reasons.")
     begin
       result = self.http_post("#{@camunda_url}/box/jobs/#{job_id}/failure", {
-        errorDetails: details,
-        errorMessage: message,
-        scannerId: @worker_id
+          errorDetails: details,
+          errorMessage: message,
+          scannerId: @worker_id
       }.to_json)
       $logger.info "Submitted failure for job: " + job_id
       result
@@ -166,27 +166,27 @@ class CamundaWorker
     rescue => e
       $logger.debug "Error while connecting to #{url}"
       $logger.debug e.message
-      throw nil
+      raise StandardError.new
     end
   end
 
   def create_post_request(url, payload)
     if @protected_engine
       RestClient::Request.new({
-                    method: :post,
-                    url: url,
-                    user: @basic_auth_user,
-                    password: @basic_auth_password,
-                    payload: payload,
-                    headers: {:accept => :'application/json', content_type: :'application/json'}
-                  })
+                                  method: :post,
+                                  url: url,
+                                  user: @basic_auth_user,
+                                  password: @basic_auth_password,
+                                  payload: payload,
+                                  headers: {:accept => :'application/json', content_type: :'application/json'}
+                              })
     else
       RestClient::Request.new({
-                    method: :post,
-                    url: url,
-                    payload: payload,
-                    headers: {:accept => :'application/json', content_type: :'application/json'}
-                  })
+                                  method: :post,
+                                  url: url,
+                                  payload: payload,
+                                  headers: {:accept => :'application/json', content_type: :'application/json'}
+                              })
     end
   end
 end
