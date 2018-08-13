@@ -21,7 +21,7 @@ class ArachniResultTransformer
           id: @uuid_provider.uuid,
           name: issue.dig('name'),
           description: issue.dig('description'),
-          category: issue.dig('name'),
+          category: issue.dig('check','name'),
           osi_layer: 'APPLICATION',
           reference: reference,
           severity: issue.dig('severity').upcase,
