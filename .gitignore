@@ -98,3 +98,6 @@ fabric.properties
 
 # All Jetbranins directories
 .idea
+
+# OS Specific Files
+.DS_Store
