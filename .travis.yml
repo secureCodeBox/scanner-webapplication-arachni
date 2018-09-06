@@ -1,23 +1,23 @@
 language: ruby
 rvm:
-  - 2.5
+    - 2.5
 jobs:
-  include:
-    - stage: test
-      script: rake test
-    - stage: build docker image
-      if: branch IN (master, develop) AND type != pull_request
-      services:
-        - docker
-      script:
-        - export REPO=securecodebox/arachni
-        - export TAG=$TRAVIS_BRANCH
-        - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
-        - echo -en "travis_fold:start:Docker_Build\r"
-        - docker build -t $REPO:$TAG --build-arg=COMMIT_ID=$TRAVIS_COMMIT --build-arg=BRANCH=$TRAVIS_BRANCH --build-arg=REPOSITORY_URL="https://github.com/secureCodeBox/scanner-webapplication-arachni" .
-        - docker tag $REPO:$TAG $REPO:oss;
-        - docker tag $REPO:$TAG $REPO:latest;
-        - docker tag $REPO:$TAG $REPO:$TRAVIS_BUILD_NUMBER;
-        - echo -en "travis_fold:end:Docker_Build\r"
-        - docker images
-        - docker push $REPO
+    include:
+        - stage: test
+          script: rake test
+        - stage: build docker image
+          services:
+              - docker
+          script:
+              - export REPO=securecodebox/arachni
+              - export TAG=$(echo $TRAVIS_BRANCH | sed 's/\//-/g')
+              - echo -en "travis_fold:start:Docker_Build\r"
+              - docker build -t $REPO:$TAG --build-arg="BUILD_DATE=$(date --rfc-3339=seconds)" --build-arg=VERSION=$TRAVIS_TAG --build-arg=COMMIT_ID=$TRAVIS_COMMIT --build-arg=BRANCH=$TRAVIS_BRANCH --build-arg=REPOSITORY_URL="https://github.com/secureCodeBox/scanner-webapplication-arachni" .
+              - echo -en "travis_fold:end:Docker_Build\r"
+              - docker images
+deploy:
+    - provider: script
+      skip_cleanup: true
+      script: bash .travis/deployDockerHub.sh
+      on:
+          all_branches: true
