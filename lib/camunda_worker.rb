@@ -44,9 +44,9 @@ class CamundaWorker
     @protected_engine = (ENV.has_key? 'ENGINE_BASIC_AUTH_USER') and (ENV.has_key? 'ENGINE_BASIC_AUTH_PASSWORD')
     @basic_auth_user = ENV.fetch('ENGINE_BASIC_AUTH_USER', '')
     @basic_auth_password = ENV.fetch('ENGINE_BASIC_AUTH_PASSWORD', '')
-    @repository_url = ENV.fetch('SCB_REPOSITORY_URL')
-    @branch = ENV.fetch('SCB_BRANCH')
-    @commit_id = ENV.fetch('SCB_COMMIT_ID')
+    @repository_url = ENV.fetch('SCB_REPOSITORY_URL', 'unknown')
+    @branch = ENV.fetch('SCB_BRANCH', 'unknown')
+    @commit_id = ENV.fetch('SCB_COMMIT_ID', 'unknown')
 
     Thread.new do
       sleep poll_interval
