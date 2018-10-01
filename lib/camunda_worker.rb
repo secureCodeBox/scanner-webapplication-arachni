@@ -112,6 +112,7 @@ class CamundaWorker
         JSON.parse(res)
       end
     rescue => e
+      $logger.warn("Failed to fetch jobs")
       nil
     end
   end
@@ -158,13 +159,14 @@ class CamundaWorker
           @last_connect = Time.now
           return nil
         else
+          $logger.warn "Unexpected http status code (#{response.code}) received."
           $logger.debug "Invalid response #{response.to_str} received."
           @last_connect = "ERROR"
           fail "Code #{response.code}: Invalid response #{response.to_str} received."
         end
       end
     rescue => e
-      $logger.debug "Error while connecting to #{url}"
+      $logger.warn "Error while connecting to #{url}."
       $logger.debug e.message
       raise StandardError.new
     end
