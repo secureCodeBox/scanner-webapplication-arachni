@@ -4,7 +4,7 @@ WORKDIR /sectools/
 
 ARG ARACHNI_DISTRIBUTION=https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
 # Name of the arachni main folder contained in the .tar.gz
-ARG ARACHNI_LONG_VERSION=arachni-1.5.1-0.5.12
+ARG ARACHNI_LONG_VERSION=1.5.1-0.5.12
 
 ENV ARACHNI_LONG_VERSION ${ARACHNI_LONG_VERSION}
 
