@@ -10,7 +10,7 @@ ENV ARACHNI_LONG_VERSION ${ARACHNI_LONG_VERSION}
 
 RUN wget ${ARACHNI_DISTRIBUTION} -P /sectools --output-document arachni.tar.gz && \
     tar zxvf arachni.tar.gz && \
-    mv arachni-${ARACHNI_FOLDER_NAME} arachni && \
+    mv arachni-${ARACHNI_LONG_VERSION} arachni && \
     rm arachni.tar.gz
 
 COPY Gemfile src/
