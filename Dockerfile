@@ -13,9 +13,7 @@ RUN wget ${ARACHNI_DISTRIBUTION} -P /sectools --output-document arachni.tar.gz &
     mv arachni-${ARACHNI_LONG_VERSION} arachni && \
     rm arachni.tar.gz
 
-# healthchecks: requires curl (if not present in container)
-# RUN apk --update --no-cache add curl
-HEALTHCHECK --interval=3s --timeout=3s --start-period=5s --retries=3 CMD curl --fail http://localhost:8080/status || exit 1
+HEALTHCHECK --interval=5s --timeout=5s --start-period=30s --retries=3 CMD curl --fail http://localhost:8080/status || exit 1
 
 COPY Gemfile src/
 
