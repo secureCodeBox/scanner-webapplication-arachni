@@ -13,7 +13,7 @@ RUN wget ${ARACHNI_DISTRIBUTION} -P /sectools --output-document arachni.tar.gz &
     mv arachni-${ARACHNI_LONG_VERSION} arachni && \
     rm arachni.tar.gz
 
-HEALTHCHECK --interval=5s --timeout=5s --start-period=30s --retries=3 CMD curl --fail http://localhost:8080/status || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 CMD curl --fail http://localhost:8080/status || exit 1
 
 COPY Gemfile src/
 
