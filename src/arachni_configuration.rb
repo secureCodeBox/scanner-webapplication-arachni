@@ -74,16 +74,16 @@ class ArachniConfiguration
     end
 
     plugins[:rate_limiter] = {
-        :requests_per_second => self.arachni_requests_per_second
+        :requests_per_second => 5
     }
 
     {
         :url => self.arachni_scanner_target,
         :http => {
-            :request_concurrency => self.arachni_request_concurrency
+            :request_concurrency => 1
         },
         :browser_cluster => {
-          :pool_size => self.arachni_pool_size
+          :pool_size => 1
         },
         :scope => {
             :dom_depth_limit => self.arachni_dom_depth_limit,
