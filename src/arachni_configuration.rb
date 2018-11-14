@@ -25,6 +25,10 @@ class ArachniConfiguration
   attr_accessor :arachni_login_credentials
   attr_accessor :arachni_login_check
   attr_accessor :arachni_login_script_filename
+  attr_accessor :arachni_requests_per_second
+  attr_accessor :arachni_pool_size
+  attr_accessor :arachni_request_concurrency
+
 
   def self.from_target(target)
     config = ArachniConfiguration.new
@@ -44,6 +48,10 @@ class ArachniConfiguration
     config.arachni_login_credentials = target.dig('attributes', 'ARACHNI_LOGIN_CREDENTIALS')
     config.arachni_login_check = target.dig('attributes', 'ARACHNI_LOGIN_CHECK')
     config.arachni_login_script_filename = target.dig('attributes', 'ARACHNI_LOGIN_SCRIPT_FILENAME')
+    config.arachni_requests_per_second = target.dig('attributes', 'ARACHNI_REQUESTS_PER_SECOND')
+    config.arachni_pool_size = target.dig('attributes','ARACHNI_POOL_SIZE')
+    config.arachni_request_concurrency = target.dig('attributes','ARACHNI_REQUEST_CONCURRENCY')
+
 
     config
   end
@@ -65,8 +73,18 @@ class ArachniConfiguration
       }
     end
 
+    plugins[:rate_limiter] = {
+        :requests_per_second => self.arachni_requests_per_second
+    }
+
     {
         :url => self.arachni_scanner_target,
+        :http => {
+            :request_concurrency => self.arachni_request_concurrency
+        },
+        :browser_cluster => {
+          :pool_size => self.arachni_pool_size
+        },
         :scope => {
             :dom_depth_limit => self.arachni_dom_depth_limit,
             :directory_depth_limit => self.arachni_dir_depth_limit,
