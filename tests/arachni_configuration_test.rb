@@ -35,9 +35,6 @@ class ArachniConfigurationTest < Test::Unit::TestCase
     {
 
             :url => 'localhost.com',
-            :http => {
-                :request_concurrency => 20
-            },
             :browser_cluster => {
                 :pool_size => 6
             },
@@ -50,7 +47,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :exclude_path_patterns =>  ['foo', 'bar']
             },
             :http => {
-                :cookie_string => 'foo=bar; bar=foo'
+                :cookie_string => 'foo=bar; bar=foo',
+                :request_concurrency => 20
             },
             :checks => '*',
             :audit => {
@@ -101,9 +99,6 @@ class ArachniConfigurationTest < Test::Unit::TestCase
 
         {
             :url => 'localhost.com',
-            :http => {
-                :request_concurrency => 20
-            },
             :browser_cluster => {
                 :pool_size => 6
             },
@@ -116,7 +111,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :exclude_path_patterns => []
             },
             :http => {
-                :cookie_string => ''
+                :cookie_string => '',
+                :request_concurrency => 20
             },
             :checks => '*',
             :audit => {
@@ -172,9 +168,6 @@ class ArachniConfigurationTest < Test::Unit::TestCase
 
         {
             :url => 'localhost.com',
-            :http => {
-                :request_concurrency => 20
-            },
             :browser_cluster => {
                 :pool_size => 6
             },
@@ -187,7 +180,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :exclude_path_patterns => []
             },
             :http => {
-                :cookie_string => ''
+                :cookie_string => '',
+                :request_concurrency => 20
             },
             :checks => '*',
             :audit => {
