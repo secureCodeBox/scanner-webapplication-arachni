@@ -48,7 +48,7 @@ get '/status' do
 end
 
 def healthy?(worker, test_run)
-  worker.last_connect != "ERROR" and test_run == "SUCCESSFUL" and !worker.errored
+  test_run == "SUCCESSFUL"
 end
 
 def scanner_test

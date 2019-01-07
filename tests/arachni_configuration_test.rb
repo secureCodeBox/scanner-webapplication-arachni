@@ -19,6 +19,10 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_EXTEND_PATH" => ['http://foobar.com', 'http://foobar.com/foo/bar'],
             "ARACHNI_LOGIN_URL" => '',
             "ARACHNI_LOGIN_CREDENTIALS" => '',
+            "ARACHNI_LOGIN_SCRIPT_FILENAME" => '',
+            "ARACHNI_REQUESTS_PER_SECOND" => 20,
+            "ARACHNI_POOL_SIZE" => 6,
+            "ARACHNI_REQUEST_CONCURRENCY" => 20,
             "ARACHNI_LOGIN_CHECK" => ''
         }
     }
@@ -28,6 +32,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
         config.generate_payload,
         {
             :url => 'localhost.com',
+            :browser_cluster => {
+                :pool_size => 6
+            },
             :scope => {
                 :dom_depth_limit => 10,
                 :directory_depth_limit => 62,
@@ -37,7 +44,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :exclude_path_patterns => ['foo', 'bar']
             },
             :http => {
-                :cookie_string => 'foo=bar; bar=foo'
+                :cookie_string => 'foo=bar; bar=foo',
+                :request_concurrency => 20
             },
             :checks => '*',
             :audit => {
@@ -50,7 +58,11 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :ui_forms => true,
                 :ui_inputs => true
             },
-            :plugins => {}
+            :plugins => {
+                :rate_limiter => {
+                    :requests_per_second => 20
+                }
+            }
         }
     )
   end
@@ -70,7 +82,11 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_EXTEND_PATH" => [],
             "ARACHNI_LOGIN_URL" => 'http://foobar.com/login',
             "ARACHNI_LOGIN_CREDENTIALS" => 'username=simon&password=123456',
-            "ARACHNI_LOGIN_CHECK" => 'Login Successful!'
+            "ARACHNI_LOGIN_CHECK" => 'Login Successful!',
+            "ARACHNI_LOGIN_SCRIPT_FILENAME" => '',
+            "ARACHNI_REQUESTS_PER_SECOND" => 20,
+            "ARACHNI_POOL_SIZE" => 6,
+            "ARACHNI_REQUEST_CONCURRENCY" => 20
         }
     }
     config = ArachniConfiguration.from_target "49bf7fd3-8512-4d73-a28f-608e493cd726", target
@@ -79,6 +95,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
         config.generate_payload,
         {
             :url => 'localhost.com',
+            :browser_cluster => {
+                :pool_size => 6
+            },
             :scope => {
                 :dom_depth_limit => 10,
                 :directory_depth_limit => 62,
@@ -88,7 +107,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :exclude_path_patterns => []
             },
             :http => {
-                :cookie_string => ''
+                :cookie_string => '',
+                :request_concurrency => 20
             },
             :checks => '*',
             :audit => {
@@ -106,6 +126,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                     :url => 'http://foobar.com/login',
                     :parameters => 'username=simon&password=123456',
                     :check => 'Login Successful!'
+                },
+                :rate_limiter => {
+                    :requests_per_second => 20
                 }
             }
         }
@@ -128,6 +151,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_LOGIN_URL" => '',
             "ARACHNI_LOGIN_CREDENTIALS" => '',
             "ARACHNI_LOGIN_CHECK" => '',
+            "ARACHNI_REQUESTS_PER_SECOND" => 20,
+            "ARACHNI_POOL_SIZE" => 6,
+            "ARACHNI_REQUEST_CONCURRENCY" => 20,
             "ARACHNI_LOGIN_SCRIPT_FILENAME" => 'login.js',
             "ARACHNI_LOGIN_SCRIPT_ARGS" => {
                 "FOO_BAR" => 'something'
@@ -142,6 +168,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
         config.generate_payload,
         {
             :url => 'localhost.com',
+            :browser_cluster => {
+                :pool_size => 6
+            },
             :scope => {
                 :dom_depth_limit => 10,
                 :directory_depth_limit => 62,
@@ -151,7 +180,8 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :exclude_path_patterns => []
             },
             :http => {
-                :cookie_string => ''
+                :cookie_string => '',
+                :request_concurrency => 20
             },
             :checks => '*',
             :audit => {
@@ -167,6 +197,9 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             :plugins => {
                 :login_script => {
                     :script => '/tmp/49bf7fd3-8512-4d73-a28f-608e493cd726.js'
+                },
+                :rate_limiter => {
+                    :requests_per_second => 20
                 }
             }
         }
