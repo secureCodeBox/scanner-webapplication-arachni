@@ -176,7 +176,7 @@ EOM
         @transformer.transform(result),
         []
     )
-    end
+  end
 
   def test_add_a_timed_out_finding_when_optional_parameter_is_passed
 
