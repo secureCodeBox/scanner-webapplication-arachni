@@ -16,7 +16,7 @@ class ArachniWorker < CamundaWorker
 
   def work(job_id, targets)
     configs = targets.map {|target|
-      ArachniConfiguration.from_target target
+      ArachniConfiguration.from_target job_id, target
     }
 
     scans = configs.map { |config|

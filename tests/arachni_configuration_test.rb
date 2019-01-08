@@ -19,21 +19,18 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_EXTEND_PATH" => ['http://foobar.com', 'http://foobar.com/foo/bar'],
             "ARACHNI_LOGIN_URL" => '',
             "ARACHNI_LOGIN_CREDENTIALS" => '',
-            "ARACHNI_LOGIN_CHECK" => '',
             "ARACHNI_LOGIN_SCRIPT_FILENAME" => '',
             "ARACHNI_REQUESTS_PER_SECOND" => 20,
             "ARACHNI_POOL_SIZE" => 6,
-            "ARACHNI_REQUEST_CONCURRENCY" => 20
-
+            "ARACHNI_REQUEST_CONCURRENCY" => 20,
+            "ARACHNI_LOGIN_CHECK" => ''
         }
     }
-    config = ArachniConfiguration.from_target target
+    config = ArachniConfiguration.from_target "49bf7fd3-8512-4d73-a28f-608e493cd726", target
 
     assert_equal(
         config.generate_payload,
-
-    {
-
+        {
             :url => 'localhost.com',
             :browser_cluster => {
                 :pool_size => 6
@@ -44,7 +41,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :page_limit => 22,
                 :extend_paths => ['http://foobar.com', 'http://foobar.com/foo/bar'],
                 :include_path_patterns => ['baz', 'bang', 'boom'],
-                :exclude_path_patterns =>  ['foo', 'bar']
+                :exclude_path_patterns => ['foo', 'bar']
             },
             :http => {
                 :cookie_string => 'foo=bar; bar=foo',
@@ -92,11 +89,10 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_REQUEST_CONCURRENCY" => 20
         }
     }
-    config = ArachniConfiguration.from_target target
+    config = ArachniConfiguration.from_target "49bf7fd3-8512-4d73-a28f-608e493cd726", target
 
     assert_equal(
         config.generate_payload,
-
         {
             :url => 'localhost.com',
             :browser_cluster => {
@@ -137,7 +133,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             }
         }
     )
-    end
+  end
 
   def test_should_build_a_correct_payload_with_login_script_plugin
     target = {
@@ -155,17 +151,21 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_LOGIN_URL" => '',
             "ARACHNI_LOGIN_CREDENTIALS" => '',
             "ARACHNI_LOGIN_CHECK" => '',
-            "ARACHNI_LOGIN_SCRIPT_FILENAME" => 'login.rb',
             "ARACHNI_REQUESTS_PER_SECOND" => 20,
             "ARACHNI_POOL_SIZE" => 6,
-            "ARACHNI_REQUEST_CONCURRENCY" => 20
+            "ARACHNI_REQUEST_CONCURRENCY" => 20,
+            "ARACHNI_LOGIN_SCRIPT_FILENAME" => 'login.js',
+            "ARACHNI_LOGIN_SCRIPT_ARGS" => {
+                "FOO_BAR" => 'something'
+            }
         }
     }
-    config = ArachniConfiguration.from_target target
+    scripts_dir = Pathname.new(__FILE__).join("../static/")
+
+    config = ArachniConfiguration.from_target "49bf7fd3-8512-4d73-a28f-608e493cd726", target, scripts_dir
 
     assert_equal(
         config.generate_payload,
-
         {
             :url => 'localhost.com',
             :browser_cluster => {
@@ -196,14 +196,32 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             },
             :plugins => {
                 :login_script => {
-                    :script => '/securecodebox/scripts/login.rb'
+                    :script => '/tmp/49bf7fd3-8512-4d73-a28f-608e493cd726.js'
                 },
                 :rate_limiter => {
                     :requests_per_second => 20
                 }
-
             }
         }
     )
+
+    actual_file_contents = File.open("/tmp/49bf7fd3-8512-4d73-a28f-608e493cd726.js", 'r') {|file| actualFileContents = file.read}
+
+    shouldBe = <<EOM
+let foo = "something";
+
+console.log(foo);
+EOM
+
+    assert_not_equal(actual_file_contents, "")
+    assert_equal(shouldBe, actual_file_contents)
+  end
+
+  def teardown
+    begin
+      File.delete("/tmp/49bf7fd3-8512-4d73-a28f-608e493cd726.js")
+    rescue
+      # ignored
+    end
   end
 end

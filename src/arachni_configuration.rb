@@ -11,6 +11,10 @@ def is_set(val)
 end
 
 class ArachniConfiguration
+  attr_accessor :job_id
+
+  attr_accessor :scripts_directory
+
   attr_accessor :arachni_scanner_target
   attr_accessor :arachni_dom_depth_limit
   attr_accessor :arachni_dir_depth_limit
@@ -28,11 +32,14 @@ class ArachniConfiguration
   attr_accessor :arachni_requests_per_second
   attr_accessor :arachni_pool_size
   attr_accessor :arachni_request_concurrency
+  attr_accessor :arachni_login_script_args
 
-
-  def self.from_target(target)
+  def self.from_target(job_id, target, scripts_directory = "/securecodebox/static/")
     config = ArachniConfiguration.new
 
+    config.scripts_directory = scripts_directory
+
+    config.job_id = job_id
     config.arachni_scanner_target = target.dig('location')
 
     config.arachni_dom_depth_limit = target.dig('attributes', 'ARACHNI_DOM_DEPTH_LIMIT')
@@ -44,10 +51,13 @@ class ArachniConfiguration
     config.arachni_authentication = target.dig('attributes', 'ARACHNI_AUTHENTICATION')
     config.arachni_cookie_string = target.dig('attributes', 'ARACHNI_COOKIE_STRING')
     config.arachni_extend_paths = target.dig('attributes', 'ARACHNI_EXTEND_PATH')
+
     config.arachni_login_url = target.dig('attributes', 'ARACHNI_LOGIN_URL')
     config.arachni_login_credentials = target.dig('attributes', 'ARACHNI_LOGIN_CREDENTIALS')
     config.arachni_login_check = target.dig('attributes', 'ARACHNI_LOGIN_CHECK')
+
     config.arachni_login_script_filename = target.dig('attributes', 'ARACHNI_LOGIN_SCRIPT_FILENAME')
+    config.arachni_login_script_args = target.dig('attributes', 'ARACHNI_LOGIN_SCRIPT_ARGS')
     config.arachni_requests_per_second = target.dig('attributes', 'ARACHNI_REQUESTS_PER_SECOND')
     config.arachni_pool_size = target.dig('attributes','ARACHNI_POOL_SIZE')
     config.arachni_request_concurrency = target.dig('attributes','ARACHNI_REQUEST_CONCURRENCY')
@@ -66,10 +76,25 @@ class ArachniConfiguration
           :check => self.arachni_login_check
       }
     elsif is_set(self.arachni_login_script_filename)
+      # Load script from the script templates directory and copy the edited static to the tmp directory
       script_file = Pathname.new(self.arachni_login_script_filename)
 
+      template_path = "#{self.scripts_directory}#{script_file.basename}"
+
+      template = ""
+      File.open(template_path, 'r'){ |file| template = file.read }
+
+      unless self.arachni_login_script_args.nil?
+        self.arachni_login_script_args.each {
+            |k,v|
+          template.gsub! "${#{k}}", v
+        }
+      end
+
+      File.open(self.file_path, 'w') { |file| file.write(template) }
+
       plugins[:login_script] = {
-          :script => "/securecodebox/scripts/#{script_file.basename}"
+          :script => self.file_path
       }
     end
 
@@ -107,5 +132,11 @@ class ArachniConfiguration
         },
         :plugins => plugins
     }
+  end
+
+  def file_path
+    template_file = Pathname.new(self.arachni_login_script_filename)
+
+    "/tmp/#{self.job_id}#{template_file.extname}"
   end
 end
