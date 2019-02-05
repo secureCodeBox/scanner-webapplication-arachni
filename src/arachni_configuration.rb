@@ -98,6 +98,10 @@ class ArachniConfiguration
       }
     end
 
+    unless is_set(self.arachni_scan_methods) or self.arachni_scan_methods != ""
+      self.arachni_scan_methods = "*"
+    end
+
     plugins[:rate_limiter] = {
         :requests_per_second => self.arachni_requests_per_second
     }
@@ -119,7 +123,7 @@ class ArachniConfiguration
           :cookie_string => self.arachni_cookie_string,
           :request_concurrency => self.arachni_request_concurrency
         },
-        :checks => '*',
+        :checks => self.arachni_scan_methods,
         :audit => {
             :parameter_values => true,
             :links => true,
