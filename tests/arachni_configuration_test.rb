@@ -13,7 +13,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_PAGE_LIMIT" => 22,
             "ARACHNI_INCLUDE_PATTERNS" => ['baz', 'bang', 'boom'],
             "ARACHNI_EXCLUDE_PATTERNS" => ['foo', 'bar'],
-            "ARACHNI_SCAN_METHODS" => '', # Unused atm
+            "ARACHNI_SCAN_METHODS" => [],
             "ARACHNI_COOKIE_STRING" => 'foo=bar; bar=foo',
             "ARACHNI_EXTEND_PATH" => ['http://foobar.com', 'http://foobar.com/foo/bar'],
             "ARACHNI_LOGIN_URL" => '',
@@ -46,7 +46,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :cookie_string => 'foo=bar; bar=foo',
                 :request_concurrency => 20
             },
-            :checks => '*',
+            :checks => ['*'],
             :audit => {
                 :parameter_values => true,
                 :links => true,
@@ -76,7 +76,15 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_PAGE_LIMIT" => 22,
             "ARACHNI_INCLUDE_PATTERNS" => ['baz', 'bang', 'boom'],
             "ARACHNI_EXCLUDE_PATTERNS" => ['foo', 'bar'],
-            "ARACHNI_SCAN_METHODS" => 'xss,xss_path,xss_tag,xss_script_context,xss_event,xss_dom,xss_dom_script_context',
+            "ARACHNI_SCAN_METHODS" => [
+                'xss',
+                'xss_path',
+                'xss_tag',
+                'xss_script_context',
+                'xss_event',
+                'xss_dom',
+                'xss_dom_script_context'
+            ],
             "ARACHNI_COOKIE_STRING" => 'foo=bar; bar=foo',
             "ARACHNI_EXTEND_PATH" => ['http://foobar.com', 'http://foobar.com/foo/bar'],
             "ARACHNI_LOGIN_URL" => '',
@@ -109,7 +117,15 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :cookie_string => 'foo=bar; bar=foo',
                 :request_concurrency => 20
             },
-            :checks => 'xss,xss_path,xss_tag,xss_script_context,xss_event,xss_dom,xss_dom_script_context',
+            :checks => [
+                'xss',
+                'xss_path',
+                'xss_tag',
+                'xss_script_context',
+                'xss_event',
+                'xss_dom',
+                'xss_dom_script_context'
+            ],
             :audit => {
                 :parameter_values => true,
                 :links => true,
@@ -139,7 +155,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_PAGE_LIMIT" => 22,
             "ARACHNI_INCLUDE_PATTERNS" => [],
             "ARACHNI_EXCLUDE_PATTERNS" => [],
-            "ARACHNI_SCAN_METHODS" => '', # Unused atm
+            "ARACHNI_SCAN_METHODS" => [],
             "ARACHNI_COOKIE_STRING" => '',
             "ARACHNI_EXTEND_PATH" => [],
             "ARACHNI_LOGIN_URL" => 'http://foobar.com/login',
@@ -172,7 +188,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :cookie_string => '',
                 :request_concurrency => 20
             },
-            :checks => '*',
+            :checks => ['*'],
             :audit => {
                 :parameter_values => true,
                 :links => true,
@@ -207,7 +223,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_PAGE_LIMIT" => 22,
             "ARACHNI_INCLUDE_PATTERNS" => [],
             "ARACHNI_EXCLUDE_PATTERNS" => [],
-            "ARACHNI_SCAN_METHODS" => '', # Unused atm
+            "ARACHNI_SCAN_METHODS" => [],
             "ARACHNI_COOKIE_STRING" => '',
             "ARACHNI_EXTEND_PATH" => [],
             "ARACHNI_LOGIN_URL" => '',
@@ -245,7 +261,7 @@ class ArachniConfigurationTest < Test::Unit::TestCase
                 :cookie_string => '',
                 :request_concurrency => 20
             },
-            :checks => '*',
+            :checks => ['*'],
             :audit => {
                 :parameter_values => true,
                 :links => true,
