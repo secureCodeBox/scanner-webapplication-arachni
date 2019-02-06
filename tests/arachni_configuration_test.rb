@@ -13,7 +13,6 @@ class ArachniConfigurationTest < Test::Unit::TestCase
             "ARACHNI_PAGE_LIMIT" => 22,
             "ARACHNI_INCLUDE_PATTERNS" => ['baz', 'bang', 'boom'],
             "ARACHNI_EXCLUDE_PATTERNS" => ['foo', 'bar'],
-            "ARACHNI_SCAN_METHODS" => [],
             "ARACHNI_COOKIE_STRING" => 'foo=bar; bar=foo',
             "ARACHNI_EXTEND_PATH" => ['http://foobar.com', 'http://foobar.com/foo/bar'],
             "ARACHNI_LOGIN_URL" => '',

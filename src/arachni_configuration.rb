@@ -98,7 +98,7 @@ class ArachniConfiguration
       }
     end
 
-    unless is_set(self.arachni_scan_methods) or not self.arachni_scan_methods.empty?
+    if self.arachni_scan_methods.nil? or self.arachni_scan_methods.empty?
       self.arachni_scan_methods = ["*"]
     end
 
