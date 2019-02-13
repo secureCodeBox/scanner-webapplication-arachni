@@ -2,12 +2,18 @@ FROM ruby:latest
 
 WORKDIR /sectools/
 
-ENV ARACHNI_SHORT_VERSION v1.5.1
-ENV ARACHNI_LONG_VERSION 1.5.1-0.5.12
+ARG ARACHNI_DISTRIBUTION=https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
+# Name of the arachni main folder contained in the .tar.gz
+ARG ARACHNI_LONG_VERSION=1.5.1-0.5.12
 
-RUN wget https://github.com/Arachni/arachni/releases/download/${ARACHNI_SHORT_VERSION}/arachni-${ARACHNI_LONG_VERSION}-linux-x86_64.tar.gz -P /sectools && \
-    tar zxvf /sectools/* -C /sectools && \
-    rm /sectools/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
+ENV ARACHNI_LONG_VERSION ${ARACHNI_LONG_VERSION}
+
+RUN wget ${ARACHNI_DISTRIBUTION} -P /sectools --output-document arachni.tar.gz && \
+    tar zxvf arachni.tar.gz && \
+    mv arachni-${ARACHNI_LONG_VERSION} arachni && \
+    rm arachni.tar.gz
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 CMD curl --fail http://localhost:8080/status || exit 1
 
 COPY Gemfile src/
 

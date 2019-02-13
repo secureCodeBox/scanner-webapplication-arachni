@@ -44,9 +44,9 @@ class CamundaWorker
     @protected_engine = (ENV.has_key? 'ENGINE_BASIC_AUTH_USER') and (ENV.has_key? 'ENGINE_BASIC_AUTH_PASSWORD')
     @basic_auth_user = ENV.fetch('ENGINE_BASIC_AUTH_USER', '')
     @basic_auth_password = ENV.fetch('ENGINE_BASIC_AUTH_PASSWORD', '')
-    @repository_url = ENV.fetch('SCB_REPOSITORY_URL')
-    @branch = ENV.fetch('SCB_BRANCH')
-    @commit_id = ENV.fetch('SCB_COMMIT_ID')
+    @repository_url = ENV.fetch('SCB_REPOSITORY_URL', 'unknown')
+    @branch = ENV.fetch('SCB_BRANCH', 'unknown')
+    @commit_id = ENV.fetch('SCB_COMMIT_ID', 'unknown')
 
     Thread.new do
       sleep poll_interval
@@ -112,6 +112,7 @@ class CamundaWorker
         JSON.parse(res)
       end
     rescue => e
+      $logger.warn("Failed to fetch jobs")
       nil
     end
   end
@@ -158,13 +159,14 @@ class CamundaWorker
           @last_connect = Time.now
           return nil
         else
+          $logger.warn "Unexpected http status code (#{response.code}) received."
           $logger.debug "Invalid response #{response.to_str} received."
           @last_connect = "ERROR"
           fail "Code #{response.code}: Invalid response #{response.to_str} received."
         end
       end
     rescue => e
-      $logger.debug "Error while connecting to #{url}"
+      $logger.warn "Error while connecting to #{url}."
       $logger.debug e.message
       raise StandardError.new
     end
