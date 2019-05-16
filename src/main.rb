@@ -26,4 +26,3 @@ get '/status' do
   content_type :json
   healthcheckClient.check(client)
 end
-d
