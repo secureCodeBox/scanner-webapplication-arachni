@@ -16,6 +16,13 @@ client = ArachniWorker.new(
     ['PROCESS_TARGETS']
 )
 
+healthcheckClient = Healthcheck.new
+
 get '/status' do
-  Healthcheck.new(client)
+  status 500
+  if client.healthy?
+    status 200
+  end
+  healthcheckClient.check(client)
 end
+d
