@@ -1,6 +1,6 @@
 require 'json'
-
-require_relative "../lib/camunda_worker"
+require 'rest-client'
+require 'ruby-scanner-scaffolding'
 
 require_relative "./arachni_scan"
 require_relative "./arachni_configuration"
@@ -34,5 +34,18 @@ class ArachniWorker < CamundaWorker
         scannerId: @worker_id.to_s,
         scannerType: 'arachni'
     }
+  end
+
+  def healthy?
+    begin
+      response = RestClient::Request.execute(
+          method: :get,
+          url: 'http://127.0.0.1:7331/scans',
+          timeout: 2
+      )
+      response.code == 200
+    rescue
+      return false
+    end
   end
 end
