@@ -57,4 +57,4 @@ LABEL org.opencontainers.image.title="secureCodeBox scanner-webapplication-arach
     org.opencontainers.image.revision=$COMMIT_ID \
     org.opencontainers.image.created=$BUILD_DATE
 
-ENTRYPOINT ["ruby","./src/main.rb"]
+ENTRYPOINT ["bash","./src/starter.sh"]
