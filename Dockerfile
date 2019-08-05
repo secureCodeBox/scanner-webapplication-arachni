@@ -1,6 +1,7 @@
 FROM ruby:latest
 
 WORKDIR /sectools/
+COPY Gemfile /sectools
 
 ARG ARACHNI_DISTRIBUTION=https://github.com/Arachni/arachni/releases/download/v1.5.1/arachni-1.5.1-0.5.12-linux-x86_64.tar.gz
 # Name of the arachni main folder contained in the .tar.gz
@@ -10,6 +11,7 @@ ENV ARACHNI_LONG_VERSION ${ARACHNI_LONG_VERSION}
 
 RUN wget ${ARACHNI_DISTRIBUTION} -P /sectools --output-document arachni.tar.gz && \
     tar zxvf arachni.tar.gz && \
+    bundle install && \
     mv arachni-${ARACHNI_LONG_VERSION} arachni && \
     rm arachni.tar.gz
 
@@ -17,10 +19,7 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=120s --retries=3 CMD curl
 
 COPY Gemfile src/
 
-RUN bundle install --gemfile=/sectools/src/Gemfile
-
 COPY src/ src/
-COPY lib/ lib/
 
 RUN addgroup -system arachni && \
     adduser -system arachni && \
@@ -58,4 +57,4 @@ LABEL org.opencontainers.image.title="secureCodeBox scanner-webapplication-arach
     org.opencontainers.image.revision=$COMMIT_ID \
     org.opencontainers.image.created=$BUILD_DATE
 
-ENTRYPOINT ["bash","/sectools/src/starter.sh"]
+ENTRYPOINT ["bash","./src/starter.sh"]
