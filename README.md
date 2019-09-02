@@ -5,9 +5,9 @@ category: "scanner"
 
 ---
 
-[![Build Status](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni.svg?branch=develop)](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub release](https://img.shields.io/github/release/secureCodeBox/scanner-webapplication-arachni.svg)](https://github.com/secureCodeBox/scanner-webapplication-arachni/releases/latest)
+Arachni is an Open Source, feature-full, modular, high-performance Ruby framework aimed towards helping penetration testers and administrators evaluate the security of web applications. It is smart, it trains itself by learning from the HTTP responses it receives during the audit process and is able to perform meta-analysis using a number of factors in order to correctly assess the trustworthiness of results and intelligently identify false-positives.
+
+<!-- end -->
 
 # Important License information
 
@@ -18,8 +18,6 @@ Arachni is licensed under the [Arachni Public Source License](ARACHNI_LICENSE.md
 # About
 
 This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application.
-
-<!-- end -->
 
 Further Documentation:
 
@@ -56,6 +54,12 @@ To run the testsuite run:
 To build the docker container run:
 
 `docker build -t IMAGE_NAME:LABEL .`
+
+
+[![Build Status](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni.svg?branch=develop)](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GitHub release](https://img.shields.io/github/release/secureCodeBox/scanner-webapplication-arachni.svg)](https://github.com/secureCodeBox/scanner-webapplication-arachni/releases/latest)
+
 
 [scb-project]: https://github.com/secureCodeBox/secureCodeBox
 [scb-developer-guide]: https://github.com/secureCodeBox/secureCodeBox/blob/develop/docs/developer-guide/README.md
