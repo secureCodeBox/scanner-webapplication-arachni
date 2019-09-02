@@ -1,5 +1,7 @@
 ---
-title: Arachni
+title: "Arachni"
+path: "scanner/Arachni"
+category: "scanner"
 
 ---
 
