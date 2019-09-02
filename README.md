@@ -19,6 +19,8 @@ Arachni is licensed under the [Arachni Public Source License](ARACHNI_LICENSE.md
 
 This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application.
 
+<!-- end -->
+
 Further Documentation:
 
 - [Project Description][scb-project]
