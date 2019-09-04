@@ -3,6 +3,7 @@ title: "Arachni"
 path: "scanner/Arachni"
 category: "scanner"
 usecase: "Webapplication Vulnerabilty Scanner"
+release: "https://img.shields.io/github/release/secureCodeBox/scanner-webapplication-arachni.svg"
 
 ---
 
