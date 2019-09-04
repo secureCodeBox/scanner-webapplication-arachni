@@ -2,6 +2,7 @@
 title: "Arachni"
 path: "scanner/Arachni"
 category: "scanner"
+usecase: "Webapplication Vulnerabilty Scanner"
 
 ---
 
