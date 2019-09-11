@@ -21,7 +21,7 @@ Arachni is licensed under the [Arachni Public Source License](ARACHNI_LICENSE.md
 
 # About
 
-This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application. To learn more about the WPScan scanner itself visit [arachni-scanner.com].
+This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application. To learn more about the Arachni scanner itself visit [arachni-scanner.com].
 
 ## Arachni parameters
 To hand over supported parameters through api usage, you can set following attributes:
