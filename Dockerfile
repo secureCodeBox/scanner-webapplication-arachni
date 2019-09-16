@@ -31,7 +31,7 @@ RUN chgrp -R 0 /sectools/ && \
 
 USER arachni
 
-VOLUME /securecodebox/scripts/
+VOLUME /securecodebox/static/
 
 EXPOSE 8080
 
