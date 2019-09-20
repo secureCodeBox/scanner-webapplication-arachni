@@ -63,13 +63,14 @@ class ArachniScan
     last_request_count = 0
     last_request_count_change =Time.new
     timed_out_request_count = 0
-    response = nil
 
     loop do
+      response = nil
+
       begin
         request = RestClient::Request.execute(
             method: :get,
-            url: "#{@scanner_url}/#{@scan_id}",
+            url: "#{@scanner_url}/#{@scan_id}/summary",
             timeout: 5
         )
         $logger.debug "Status endpoint returned #{request.code}"
@@ -89,9 +90,15 @@ class ArachniScan
       end
 
       unless response.nil?
-        finding_count = response["issues"].length
         current_request_count = response['statistics']['http']['request_count']
-        $logger.info "Currently at #{finding_count} findings with #{current_request_count} requests made"
+        found_pages = response['statistics']['found_pages']
+        audited_pages = response['statistics']['audited_pages']
+        current_page = response['statistics']['current_page']
+
+        $logger.info "Request made:  #{current_request_count}"
+        $logger.info "Pages found:   #{found_pages}"
+        $logger.info "Pages audited: #{audited_pages}"
+        $logger.info "Current Page:  #{current_page}"
 
         if current_request_count == last_request_count
           if Time.now > last_request_count_change + (5 * 60)
@@ -118,7 +125,7 @@ class ArachniScan
       report = RestClient::Request.execute(
           method: :get,
           url: "#{@scanner_url}/#{@scan_id}/report.json",
-          timeout: 2
+          timeout: 60
       )
       @raw_results = JSON.parse(report)
       @results = @transformer.transform(@raw_results, timed_out: timed_out)
