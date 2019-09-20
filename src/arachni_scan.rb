@@ -62,36 +62,53 @@ class ArachniScan
   def wait_for_scan
     last_request_count = 0
     last_request_count_change =Time.new
+    timed_out_request_count = 0
+    response = nil
 
     loop do
       begin
         request = RestClient::Request.execute(
             method: :get,
             url: "#{@scanner_url}/#{@scan_id}",
-            timeout: 2
+            timeout: 5
         )
         $logger.debug "Status endpoint returned #{request.code}"
         response = JSON.parse(request)
         $logger.debug "Checking status of scan '#{@scan_id}': currently busy: #{response['busy']}"
+      rescue RestClient::Exceptions::ReadTimeout => err
+        timed_out_request_count += 1
+
+        $logger.warn "Request to poll for current results timed out."
+
+        if timed_out_request_count > 10
+          $logger.warn "Polling for results timed out repeatably."
+          raise ScanTimeOutError.new
+        end
       rescue => err
         $logger.warn err
       end
 
-      findingCount = response["issues"].length
-      currentRequestCount = response['statistics']['http']['request_count']
-      $logger.info "Currently at #{findingCount} findings with #{currentRequestCount} requests made"
+      unless response.nil?
+        finding_count = response["issues"].length
+        current_request_count = response['statistics']['http']['request_count']
+        $logger.info "Currently at #{finding_count} findings with #{current_request_count} requests made"
 
-      if currentRequestCount == last_request_count
-        if Time.now > last_request_count_change + (5 * 60)
-          $logger.warn("Arachni request count hasn't updated in 5 min. It probably stuck...")
-          raise ScanTimeOutError.new
+        if current_request_count == last_request_count
+          if Time.now > last_request_count_change + (5 * 60)
+            $logger.warn("Arachni request count hasn't updated in 5 min. It's probably stuck...")
+            raise ScanTimeOutError.new
+          end
+        else
+          last_request_count = current_request_count
+          last_request_count_change = Time.new
         end
-      else
-        last_request_count = currentRequestCount
-        last_request_count_change = Time.new
+
+        # Resetting timed out count as the current request succeed
+        timed_out_request_count = 0
+
+        break unless response['busy']
       end
 
-      break unless response['busy']
       sleep 2
     end
   end
