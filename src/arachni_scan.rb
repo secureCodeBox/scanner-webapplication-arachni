@@ -95,10 +95,18 @@ class ArachniScan
         audited_pages = response['statistics']['audited_pages']
         current_page = response['statistics']['current_page']
 
+        burst_average_response_time = response['statistics']['http']['burst_average_response_time']
+        total_average_response_time = response['statistics']['http']['total_average_response_time']
+
+        burst_responses_per_second = response['statistics']['http']['burst_responses_per_second']
+        total_responses_per_second = response['statistics']['http']['total_responses_per_second']
+
         $logger.info "Request made:  #{current_request_count}"
         $logger.info "Pages found:   #{found_pages}"
         $logger.info "Pages audited: #{audited_pages}"
         $logger.info "Current Page:  #{current_page}"
+        $logger.info "Burst Avg. Response Time: #{burst_average_response_time}s, Total Avg. Response Time: #{total_average_response_time}s"
+        $logger.info "Burst Requests: #{burst_responses_per_second}/s, Total Requests per Second: #{total_responses_per_second}/s"
 
         if current_request_count == last_request_count
           if Time.now > last_request_count_change + (5 * 60)
