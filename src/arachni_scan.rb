@@ -76,7 +76,7 @@ class ArachniScan
         $logger.debug "Status endpoint returned #{request.code}"
         response = JSON.parse(request)
         $logger.debug "Checking status of scan '#{@scan_id}': currently busy: #{response['busy']}"
-      rescue RestClient::Exceptions::ReadTimeout => err
+      rescue RestClient::Exceptions::ReadTimeout
         timed_out_request_count += 1
 
         $logger.warn "Request to poll for current results timed out."
