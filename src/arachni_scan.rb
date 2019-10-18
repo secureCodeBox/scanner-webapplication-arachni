@@ -62,36 +62,68 @@ class ArachniScan
   def wait_for_scan
     last_request_count = 0
     last_request_count_change =Time.new
+    timed_out_request_count = 0
 
     loop do
+      response = nil
+
       begin
         request = RestClient::Request.execute(
             method: :get,
-            url: "#{@scanner_url}/#{@scan_id}",
-            timeout: 2
+            url: "#{@scanner_url}/#{@scan_id}/summary",
+            timeout: 5
         )
         $logger.debug "Status endpoint returned #{request.code}"
         response = JSON.parse(request)
         $logger.debug "Checking status of scan '#{@scan_id}': currently busy: #{response['busy']}"
+      rescue RestClient::Exceptions::ReadTimeout
+        timed_out_request_count += 1
+
+        $logger.warn "Request to poll for current results timed out."
+
+        if timed_out_request_count > 10
+          $logger.warn "Polling for results timed out repeatably."
+          raise ScanTimeOutError.new
+        end
       rescue => err
         $logger.warn err
       end
 
-      findingCount = response["issues"].length
-      currentRequestCount = response['statistics']['http']['request_count']
-      $logger.info "Currently at #{findingCount} findings with #{currentRequestCount} requests made"
+      unless response.nil?
+        current_request_count = response['statistics']['http']['request_count']
+        found_pages = response['statistics']['found_pages']
+        audited_pages = response['statistics']['audited_pages']
+        current_page = response['statistics']['current_page']
 
-      if currentRequestCount == last_request_count
-        if Time.now > last_request_count_change + (5 * 60)
-          $logger.warn("Arachni request count hasn't updated in 5 min. It probably stuck...")
-          raise ScanTimeOutError.new
+        burst_average_response_time = response['statistics']['http']['burst_average_response_time']
+        total_average_response_time = response['statistics']['http']['total_average_response_time']
+
+        burst_responses_per_second = response['statistics']['http']['burst_responses_per_second']
+        total_responses_per_second = response['statistics']['http']['total_responses_per_second']
+
+        $logger.info "Request made:  #{current_request_count}"
+        $logger.info "Pages found:   #{found_pages}"
+        $logger.info "Pages audited: #{audited_pages}"
+        $logger.info "Current Page:  #{current_page}"
+        $logger.info "Burst Avg. Response Time: #{burst_average_response_time}s, Total Avg. Response Time: #{total_average_response_time}s"
+        $logger.info "Burst Requests: #{burst_responses_per_second}/s, Total Requests per Second: #{total_responses_per_second}/s"
+
+        if current_request_count == last_request_count
+          if Time.now > last_request_count_change + (5 * 60)
+            $logger.warn("Arachni request count hasn't updated in 5 min. It's probably stuck...")
+            raise ScanTimeOutError.new
+          end
+        else
+          last_request_count = current_request_count
+          last_request_count_change = Time.new
         end
-      else
-        last_request_count = currentRequestCount
-        last_request_count_change = Time.new
+
+        # Resetting timed out count as the current request succeed
+        timed_out_request_count = 0
+
+        break unless response['busy']
       end
 
-      break unless response['busy']
       sleep 2
     end
   end
@@ -101,7 +133,7 @@ class ArachniScan
       report = RestClient::Request.execute(
           method: :get,
           url: "#{@scanner_url}/#{@scan_id}/report.json",
-          timeout: 2
+          timeout: 60
       )
       @raw_results = JSON.parse(report)
       @results = @transformer.transform(@raw_results, timed_out: timed_out)
