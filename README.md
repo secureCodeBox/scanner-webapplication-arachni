@@ -81,11 +81,11 @@ Due to some technical problems we cannot provide Arachni scans at the moment.
 
 To configure this service specify the following environment variables:
 
-| Environment Variable       | Value Example |
-| -------------------------- | ------------- |
-| ENGINE_ADDRESS             | http://engine |
-| ENGINE_BASIC_AUTH_USER     | username      |
-| ENGINE_BASIC_AUTH_PASSWORD | 123456        |
+| Environment Variable         | Value Example |
+| ---------------------------- | ------------- |
+| `ENGINE_ADDRESS`             | http://engine |
+| `ENGINE_BASIC_AUTH_USER`     | username      |
+| `ENGINE_BASIC_AUTH_PASSWORD` | 123456        |
 
 ## Development
 
