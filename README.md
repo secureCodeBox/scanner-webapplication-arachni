@@ -9,6 +9,8 @@ release: "https://img.shields.io/github/release/secureCodeBox/scanner-webapplica
 
 ![arachni logo](https://www.arachni-scanner.com/wp-content/uploads/2013/03/arachni-web-logo.png)
 
+> **WARNING**: Arachni Development has been halted for some time. The latest released version of arachni has problems running on newer operating systems. The secureCodeBox integration of arachni is considered unstable at the moment. Try ZAP instead.
+
 Arachni is an Open Source, feature-full, modular, high-performance Ruby framework aimed towards helping penetration testers and administrators evaluate the security of web applications. It is smart, it trains itself by learning from the HTTP responses it receives during the audit process and is able to perform meta-analysis using a number of factors in order to correctly assess the trustworthiness of results and intelligently identify false-positives.
 
 <!-- end -->
@@ -62,8 +64,8 @@ Example configuration:
     "name": "arachni",
     "context": "Example Test",
     "target": {
-      "name": "BodgeIT on OpenShift",
-      "location": "bodgeit-scb.cloudapps.iterashift.com",
+      "name": "BodgeIT",
+      "location": "bodgeit.example.com",
       "attributes": {}
     }
   }
