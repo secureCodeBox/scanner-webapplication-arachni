@@ -1,6 +1,17 @@
-[![Build Status](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni.svg?branch=develop)](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni)
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![GitHub release](https://img.shields.io/github/release/secureCodeBox/scanner-webapplication-arachni.svg)](https://github.com/secureCodeBox/scanner-webapplication-arachni/releases/latest)
+---
+title: "Arachni"
+path: "scanner/Arachni"
+category: "scanner"
+usecase: "Webapplication Vulnerabilty Scanner"
+release: "https://img.shields.io/github/release/secureCodeBox/scanner-webapplication-arachni.svg"
+
+---
+
+![arachni logo](https://www.arachni-scanner.com/wp-content/uploads/2013/03/arachni-web-logo.png)
+
+Arachni is an Open Source, feature-full, modular, high-performance Ruby framework aimed towards helping penetration testers and administrators evaluate the security of web applications. It is smart, it trains itself by learning from the HTTP responses it receives during the audit process and is able to perform meta-analysis using a number of factors in order to correctly assess the trustworthiness of results and intelligently identify false-positives.
+
+<!-- end -->
 
 # Important License information
 
@@ -10,15 +21,61 @@ Arachni is licensed under the [Arachni Public Source License](ARACHNI_LICENSE.md
 
 # About
 
-This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application.
+This is a self contained µService utilizing the Arachni Web Scanner for the secureBox Application. To learn more about the Arachni scanner itself visit [arachni-scanner.com].
 
-Further Documentation:
+## Arachni parameters
+To hand over supported parameters through api usage, you can set following attributes:
 
-- [Project Description][scb-project]
-- [Developer Guide][scb-developer-guide]
-- [User Guide][scb-user-guide]
+```json
+[
+  {
+    "context": "some context",
+    "name": "arachni",
+    "target": {
+      "name": "some name",
+      "location": "your-target",
+      "attributes": {
+        "ARACHNI_DOM_DEPTH_LIMIT": "[int limit]",
+        "ARACHNI_DIR_DEPTH_LIMIT": "[int limit]",
+        "ARACHNI_PAGE_LIMIT": "[int limit]",
+        "ARACHNI_EXCLUDE_PATTERNS": [
+          "patterns e.g. :"
+          ".*\\.png",
+          ".*util\\.js",
+          ".*style\\.css"
+        ],
+        "ARACHNI_SCAN_METHODS": "[method name]",
+        "ARACHNI_REQUESTS_PER_SECOND": "[seconds]",
+        "ARACHNI_POOL_SIZE": "[size]",
+        "ARACHNI_REQUEST_CONCURRENCY": "[int concurency]"
+      }
+    }
+  }
+]
+```
+## Example
+Example configuration:
 
-## Configuration Options
+```json
+[
+  {
+    "name": "arachni",
+    "context": "Example Test",
+    "target": {
+      "name": "BodgeIT on OpenShift",
+      "location": "bodgeit-scb.cloudapps.iterashift.com",
+      "attributes": {}
+    }
+  }
+]
+```
+
+Example output:
+Due to some technical problems we cannot provide Arachni scans at the moment. 
+
+## Development
+
+### Configuration Options
 
 To configure this service specify the following environment variables:
 
@@ -48,7 +105,10 @@ To build the docker container run:
 
 `docker build -t IMAGE_NAME:LABEL .`
 
-[scb-project]: https://github.com/secureCodeBox/secureCodeBox
-[scb-developer-guide]: https://github.com/secureCodeBox/secureCodeBox/blob/develop/docs/developer-guide/README.md
-[scb-developer-guidelines]: https://github.com/secureCodeBox/secureCodeBox/blob/develop/docs/developer-guide/README.md#guidelines
-[scb-user-guide]: https://github.com/secureCodeBox/secureCodeBox/tree/develop/docs/user-guide
+
+[![Build Status](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni.svg?branch=master)](https://travis-ci.com/secureCodeBox/scanner-webapplication-arachni)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![GitHub release](https://img.shields.io/github/release/secureCodeBox/scanner-webapplication-arachni.svg)](https://github.com/secureCodeBox/scanner-webapplication-arachni/releases/latest)
+
+
+[arachni-scanner.com]: https://www.arachni-scanner.com/
